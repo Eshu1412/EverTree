@@ -1,11 +1,9 @@
 import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import SplashScreen from './components/SplashScreen'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Services from './components/Services'
 import HowItWorks from './components/HowItWorks'
-import Testimonials from './components/Testimonials'
 import FAQ from './components/FAQ'
 import QuoteForm from './components/QuoteForm'
 import Footer from './components/Footer'
@@ -18,7 +16,6 @@ import ContactRedirectModal from './components/ContactRedirectModal'
 import { DEFAULT_CONTACT_CONFIG, getServicePhone } from './utils/serviceContact'
 
 export default function App() {
-  const [splashDone, setSplashDone] = useState(false)
   const [quoteOpen, setQuoteOpen] = useState(false)
   const [selectedService, setSelectedService] = useState('')
 
@@ -95,10 +92,6 @@ export default function App() {
       window.fbq('track', 'PageView')
     }
   }, [viewState, activeVertical, activeSub])
-
-  const handleSplashComplete = useCallback(() => {
-    setSplashDone(true)
-  }, [])
 
   const handleNavigateHome = () => {
     if (window.location.hash === '#admin' || window.location.pathname === '/admin') {
@@ -181,7 +174,6 @@ export default function App() {
 
   return (
     <>
-      {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
 
       {/* Top Sweep Progress Indicator on Page Transitions */}
       <AnimatePresence mode="wait">
@@ -216,7 +208,6 @@ export default function App() {
               <Hero onQuoteClick={() => handleOpenQuote('')} />
               <Services onSelectSubVertical={handleNavigateSubVertical} />
               <HowItWorks />
-              <Testimonials />
               <FAQ onQuoteClick={() => handleOpenQuote('')} />
             </motion.div>
           )}
