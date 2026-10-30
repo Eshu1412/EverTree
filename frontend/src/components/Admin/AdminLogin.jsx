@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  FiLock, FiUser, FiArrowRight, FiShield, 
+  FiLock, FiUser, FiArrowRight, 
   FiAlertCircle, FiSun, FiMoon, FiArrowLeft,
-  FiEye, FiEyeOff, FiKey
+  FiEye, FiEyeOff
 } from 'react-icons/fi';
 import './AdminDashboard.css';
 
@@ -13,12 +13,6 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const handleFillDemo = () => {
-    setUsername('admin');
-    setPassword('EverTreeDemo!2026');
-    setError('');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,23 +91,6 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
         <p className="admin-login-subtitle">
           Secure sign-in for platform managers and quote specialists.
         </p>
-
-        {/* Demo Credentials Quick Helper */}
-        <div className="admin-demo-helper">
-          <div className="admin-demo-badge">
-            <FiKey className="admin-demo-icon" />
-            <span>Default:</span>
-            <code>admin</code> / <code>EverTreeDemo!2026</code>
-          </div>
-          <button
-            type="button"
-            className="admin-demo-fill-btn"
-            onClick={handleFillDemo}
-            title="Auto-fill credentials"
-          >
-            Auto-fill
-          </button>
-        </div>
 
         {error && (
           <div className="admin-error-banner">

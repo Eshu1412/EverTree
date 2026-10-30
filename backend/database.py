@@ -32,7 +32,7 @@ except ImportError:
 TURSO_DB_URL = os.getenv("TURSO_DATABASE_URL") or os.getenv("TURSO_DB_URL", "")
 TURSO_AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN") or os.getenv("TURSO_DB_KEY", "")
 DEFAULT_ADMIN_USERNAME = os.getenv("ADMIN_USERNAME") or "admin"
-DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD") or "EverTreeDemo!2026"
+DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
 DATABASE_MODE = os.getenv("DATABASE_MODE", "turso").lower()
 SEED_DEMO_DATA = os.getenv("SEED_DEMO_DATA", "false").lower() == "true"
 
@@ -246,19 +246,25 @@ def init_db():
                 except Exception:
                     pass
 
-            # Create the configured administrator only when it does not exist.
+            # Create the administrator only when it does not exist.
             from .auth import hash_password
-            admin_pw = DEFAULT_ADMIN_PASSWORD or os.getenv("ADMIN_PASSWORD") or "EverTreeDemo!2026"
-            admin_pw_hash = hash_password(admin_pw)
             for uname in [DEFAULT_ADMIN_USERNAME]:
                 try:
                     u_rows, _, _ = query_turso("SELECT * FROM users WHERE LOWER(username) = LOWER(?)", [uname])
                     if not u_rows:
+                        admin_pw = os.getenv("ADMIN_PASSWORD") or "EverTreeAdmin!2026"
+                        admin_pw_hash = hash_password(admin_pw)
                         query_turso(
                             "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
                             [uname, admin_pw_hash, "admin"]
                         )
                         print(f"[DB] Admin user '{uname}' created on Turso")
+                    elif os.getenv("ADMIN_PASSWORD"):
+                        admin_pw_hash = hash_password(os.getenv("ADMIN_PASSWORD"))
+                        query_turso(
+                            "UPDATE users SET password_hash = ? WHERE LOWER(username) = LOWER(?)",
+                            [admin_pw_hash, uname]
+                        )
                 except Exception as ex:
                     print(f"[DB] Turso admin user '{uname}' check warning: {ex}")
 
@@ -286,16 +292,22 @@ def init_db():
             pass
 
     from .auth import hash_password
-    admin_pw = DEFAULT_ADMIN_PASSWORD or os.getenv("ADMIN_PASSWORD") or "EverTreeDemo!2026"
-    admin_pw_hash = hash_password(admin_pw)
     for uname in [DEFAULT_ADMIN_USERNAME]:
         cursor.execute("SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)", (uname,))
         if cursor.fetchone()[0] == 0:
+            admin_pw = os.getenv("ADMIN_PASSWORD") or "EverTreeAdmin!2026"
+            admin_pw_hash = hash_password(admin_pw)
             cursor.execute(
                 "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
                 (uname, admin_pw_hash, "admin"),
             )
             print(f"[DB] Admin user '{uname}' created locally")
+        elif os.getenv("ADMIN_PASSWORD"):
+            admin_pw_hash = hash_password(os.getenv("ADMIN_PASSWORD"))
+            cursor.execute(
+                "UPDATE users SET password_hash = ? WHERE LOWER(username) = LOWER(?)",
+                (admin_pw_hash, uname),
+            )
     conn.commit()
     conn.close()
     if SEED_DEMO_DATA:
