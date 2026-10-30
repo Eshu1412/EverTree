@@ -80,7 +80,7 @@ async def retain_trusted_form_cert(cert_url: str, email: str = "", phone: str = 
     }
 
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        async with httpx.AsyncClient(timeout=4.0) as client:
             # Primary v4.0 ActiveProspect Retain API call
             response = await client.post(
                 cert_url,
@@ -93,6 +93,17 @@ async def retain_trusted_form_cert(cert_url: str, email: str = "", phone: str = 
                 cert_id = data.get("id") or data.get("cert_id") or ""
                 print(f"[TrustedForm] Certificate retained successfully via v4.0: {cert_id}")
                 return {"retained": True, "cert_id": cert_id, "data": data}
+
+            # If client received explicit 4xx error (e.g., 400 Bad Request, 401 Unauthorized, 404 Not Found),
+            # return immediately without sequential delays
+            if response.status_code in (400, 401, 403, 404):
+                print(f"[TrustedForm] Retention returned terminal HTTP {response.status_code}: {response.text}")
+                return {
+                    "retained": False,
+                    "cert_id": "",
+                    "status_code": response.status_code,
+                    "error": response.text
+                }
 
             # Fallback 1: Retain without api-version header for legacy certificate endpoints
             alt_resp = await client.post(

@@ -31,8 +31,8 @@ except ImportError:
 # ── Turso Configuration ────────────────────────────────
 TURSO_DB_URL = os.getenv("TURSO_DATABASE_URL") or os.getenv("TURSO_DB_URL", "")
 TURSO_AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN") or os.getenv("TURSO_DB_KEY", "")
-DEFAULT_ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
-DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "EverTreeDemo!2026")
+DEFAULT_ADMIN_USERNAME = os.getenv("ADMIN_USERNAME") or "admin"
+DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD") or "EverTreeDemo!2026"
 DATABASE_MODE = os.getenv("DATABASE_MODE", "turso").lower()
 SEED_DEMO_DATA = os.getenv("SEED_DEMO_DATA", "false").lower() == "true"
 

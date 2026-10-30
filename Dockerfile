@@ -17,7 +17,11 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
-    PORT=8080
+    PORT=8080 \
+    ADMIN_USERNAME=admin \
+    ADMIN_PASSWORD=EverTreeDemo!2026 \
+    DATABASE_MODE=turso \
+    TRUSTEDFORM_API_KEY=82ee82d4bb767148ccb8741c713b8998
 
 # Install backend dependencies
 COPY backend/requirements.txt ./backend/requirements.txt
