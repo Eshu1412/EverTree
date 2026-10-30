@@ -1,0 +1,25 @@
+# render.yaml configuration file for Render deployment
+services:
+  - type: web
+    name: evertree-solutions
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: TRUSTEDFORM_API_KEY
+        sync: false
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: TURSO_DB_URL
+        sync: false
+      - key: TURSO_DB_KEY
+        sync: false
+      - key: VITE_META_PIXEL_ID
+        sync: false
+      - key: VITE_TRUSTEDFORM_ENABLED
+        value: "false"

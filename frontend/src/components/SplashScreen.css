@@ -1,0 +1,225 @@
+/* ==========================================================
+   EverTree Solutions — Fast, Stunning Luxury Brand Splash Screen
+   ========================================================== */
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: radial-gradient(ellipse 90% 70% at 50% 25%, #07473f 0%, #03363a 45%, #02181a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
+  color: #ffffff;
+  padding: 1.5rem;
+  font-family: var(--font, 'Manrope', 'Outfit', sans-serif);
+}
+
+/* Ambient Floating Backdrops */
+.splash-ambient-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.splash-ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+.splash-ambient-orb.orb-1 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(11, 107, 92, 0.5) 0%, transparent 70%);
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.splash-ambient-orb.orb-2 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(232, 184, 74, 0.2) 0%, transparent 70%);
+  bottom: -60px;
+  right: 15%;
+}
+
+/* Quick Skip Button */
+.splash-quick-skip {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(232, 184, 74, 0.25);
+  color: #e8f2ee;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.splash-quick-skip:hover {
+  background: rgba(232, 184, 74, 0.2);
+  color: #ffffff;
+  border-color: #e8b84a;
+}
+
+.splash-skip-icon {
+  font-size: 0.7rem;
+  color: #e8b84a;
+}
+
+/* Central Stage */
+.splash-brand-stage {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 460px;
+  width: 100%;
+}
+
+/* Official Framed Logo */
+.splash-logo-container {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  border-radius: 24px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  border: 2px solid rgba(232, 184, 74, 0.45);
+  margin-bottom: 1.25rem;
+  padding: 12px;
+}
+
+.splash-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.splash-glow-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 28px;
+  background: radial-gradient(circle, rgba(232, 184, 74, 0.4) 0%, transparent 75%);
+  z-index: -1;
+  animation: splashPulse 2.4s infinite alternate ease-in-out;
+}
+
+@keyframes splashPulse {
+  0% { transform: scale(0.96); opacity: 0.4; }
+  100% { transform: scale(1.12); opacity: 0.85; filter: drop-shadow(0 0 14px rgba(232, 184, 74, 0.6)); }
+}
+
+/* Titles */
+.splash-title {
+  font-family: var(--font-heading, 'Manrope', sans-serif);
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.splash-gold-word {
+  color: #e8b84a;
+  text-shadow: 0 0 20px rgba(232, 184, 74, 0.4);
+}
+
+.splash-subtitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #c4dfd6;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 1.25rem;
+}
+
+/* Verification Badge */
+.splash-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(11, 107, 92, 0.35);
+  border: 1px solid rgba(196, 223, 214, 0.25);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: #e8f2ee;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(8px);
+}
+
+.splash-shield-icon {
+  color: #e8b84a;
+  font-size: 0.8rem;
+}
+
+/* Hairline Progress Track */
+.splash-progress-track {
+  width: 220px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.splash-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0b6b5c 0%, #e8b84a 50%, #f3ca65 100%);
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(232, 184, 74, 0.7);
+  transition: width 0.05s linear;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .splash-logo-container {
+    width: 76px;
+    height: 76px;
+    border-radius: 20px;
+  }
+
+  .splash-logo-img {
+    width: 66px;
+    height: 66px;
+  }
+
+  .splash-title {
+    font-size: 1.85rem;
+  }
+
+  .splash-subtitle {
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+  }
+
+  .splash-trust-badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.75rem;
+  }
+
+  .splash-progress-track {
+    width: 180px;
+  }
+}

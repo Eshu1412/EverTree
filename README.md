@@ -56,11 +56,13 @@ EverTree Solutions is an ultra-premium quote-matching and consultation portal fo
 
 ---
 
-## Future Tracking Integrations
+## Compliance & Marketing Integrations
 
-- **ActiveProspect TrustedForm**:
-  - Frontend auto-injects `trustedform.js` when `VITE_TRUSTEDFORM_ENABLED=true` is set.
-  - Server retains certificate via ActiveProspect Retain API when `TRUSTEDFORM_API_KEY` is provided.
+- **ActiveProspect TrustedForm (ACTIVE)**:
+  - Configured with API key `82ee82d4bb767148ccb8741c713b8998` in `.env` and `backend/.env`.
+  - Frontend automatically initializes `trustedform.js` (`VITE_TRUSTEDFORM_ENABLED=true`) to generate certificates for all forms (`xxTrustedFormCertUrl`).
+  - Server automatically retains certificates via ActiveProspect Retain API v4.0 with basic authentication and lead matching (`email` & `phone`).
+  - Admin inspection status available at `/api/admin/trustedform/status`.
 - **Meta Pixel**:
   - Fully instrumented in `frontend/src/integrations/tracking.js` for PageView, Lead, ViewContent, and Contact events.
   - Activates when `VITE_META_PIXEL_ID` is set in `.env`.

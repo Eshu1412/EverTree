@@ -1,0 +1,195 @@
+/* ══════════════════════════════════════════════════════
+   EverTree Solutions — Category View Luxury Styles
+   ══════════════════════════════════════════════════════ */
+
+.category-view {
+  background: #F6F9F7;
+  min-height: 85vh;
+  padding-top: calc(var(--nav-height) + clamp(24px, 4vw, 40px));
+  padding-bottom: clamp(40px, 7vw, 80px);
+}
+
+.breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: #FFFFFF;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  color: #3F5655;
+  margin-bottom: 2rem;
+  border: 1.5px solid #DDE7E3;
+  box-shadow: 0 2px 6px rgba(3, 54, 58, 0.03);
+}
+
+.breadcrumb-link {
+  display: inline-flex;
+  align-items: center;
+  color: #3F5655;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 13px;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: #0B6B5C;
+}
+
+.breadcrumb-separator {
+  font-size: 10px;
+  color: #8AA3A0;
+}
+
+.breadcrumb-current {
+  color: #03363A;
+  font-weight: 700;
+}
+
+.category-header {
+  margin-bottom: 3rem;
+}
+
+.category-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.category-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--gradient-teal);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 14px rgba(3, 54, 58, 0.2);
+}
+
+.category-title {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 800;
+  color: #03363A;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.category-subtitle {
+  font-family: var(--font);
+  font-size: 16px;
+  color: #3F5655;
+  line-height: 1.65;
+  max-width: 680px;
+  margin: 0;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.sub-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  border: 2px solid #03363A;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(3, 54, 58, 0.04);
+}
+
+.sub-card:hover {
+  transform: translateY(-4px);
+  border-color: #0B6B5C;
+  box-shadow: 0 16px 36px -6px rgba(3, 54, 58, 0.12),
+              0 0 0 1px #0B6B5C;
+}
+
+.sub-card-accent {
+  height: 4px;
+  background: var(--gradient-gold);
+}
+
+.sub-card-body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.sub-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.sub-card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: #EDF7F5;
+  color: #0B6B5C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.sub-card-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 800;
+  color: #03363A;
+  letter-spacing: -0.02em;
+}
+
+.sub-card-desc {
+  font-family: var(--font);
+  font-size: 14.5px;
+  color: #3F5655;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  flex: 1;
+}
+
+.sub-card-btn {
+  width: 100%;
+  padding: 13px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  background: var(--gradient-teal);
+  color: #FFFFFF;
+  border-radius: 8px;
+  margin-top: auto;
+  transition: all 0.2s ease;
+}
+
+.sub-card:hover .sub-card-btn {
+  background: var(--gradient-gold);
+  color: #03363A;
+  box-shadow: var(--shadow-gold);
+}
+
+@media (max-width: 600px) {
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+}

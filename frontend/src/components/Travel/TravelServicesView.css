@@ -1,0 +1,88 @@
+/* ══════════════════════════════════════════════════════
+   EverTree Solutions — Flight Booking View Luxury Styles
+   ══════════════════════════════════════════════════════ */
+
+.travel-services-view {
+  min-height: 85vh;
+  padding-top: calc(var(--nav-height, 78px) + clamp(24px, 4vw, 40px));
+  padding-bottom: clamp(48px, 8vw, 96px);
+  background: #F6F9F7;
+  font-family: var(--font);
+}
+
+.travel-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2rem;
+  padding: 8px 18px;
+  background: #FFFFFF;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  color: #3F5655;
+  border: 1.5px solid #DDE7E3;
+  box-shadow: 0 2px 6px rgba(3, 54, 58, 0.03);
+}
+
+.travel-breadcrumb-link {
+  background: none;
+  border: none;
+  color: #3F5655;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  font-family: inherit;
+  transition: color 0.2s ease;
+}
+
+.travel-breadcrumb-link:hover {
+  color: #0B6B5C;
+}
+
+.travel-breadcrumb-current {
+  font-weight: 700;
+  color: #03363A;
+}
+
+.travel-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 3rem auto;
+}
+
+.travel-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #EDF7F5;
+  color: #0B6B5C;
+  border: 1px solid rgba(11, 107, 92, 0.25);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.travel-header-title {
+  font-family: var(--font-heading);
+  font-size: clamp(30px, 4.5vw, 42px);
+  font-weight: 800;
+  color: #03363A;
+  margin-bottom: 12px;
+  letter-spacing: -0.03em;
+}
+
+.travel-header-subtitle {
+  font-family: var(--font);
+  font-size: 16px;
+  color: #3F5655;
+  line-height: 1.65;
+  margin: 0 auto;
+}

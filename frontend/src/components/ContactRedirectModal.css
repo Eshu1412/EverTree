@@ -1,0 +1,414 @@
+/* ==========================================================
+   Contact Redirect Modal — Ultra-Premium EverTree Action Window
+   ========================================================== */
+
+.crm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 54, 58, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.crm-modal {
+  position: relative;
+  background: #ffffff;
+  width: 100%;
+  max-width: 490px;
+  border-radius: 24px;
+  box-shadow: 0 30px 75px -12px rgba(3, 54, 58, 0.38), 0 0 0 1px rgba(232, 184, 74, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2.25rem 2rem 1.75rem;
+  font-family: var(--font, 'Manrope', 'Outfit', sans-serif);
+}
+
+/* Close Icon Button */
+.crm-close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e2ece8;
+  background: #f8faf9;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 10;
+}
+
+.crm-close-btn:hover {
+  background: #e8f2ee;
+  color: #03363a;
+  border-color: #0b6b5c;
+  transform: scale(1.08) rotate(90deg);
+}
+
+/* Header Area */
+.crm-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crm-brand-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.85rem;
+}
+
+.crm-logo-frame {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #c4dfd6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  box-shadow: 0 2px 6px rgba(3, 54, 58, 0.08);
+}
+
+.crm-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.crm-brand-name {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: #03363a;
+  letter-spacing: -0.02em;
+}
+
+.crm-brand-name em {
+  font-style: normal;
+  color: #0b6b5c;
+  font-weight: 700;
+}
+
+.crm-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #e8f2ee;
+  color: #0b6b5c;
+  border: 1px solid #c4dfd6;
+  padding: 0.3rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+}
+
+.crm-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #0b6b5c;
+  box-shadow: 0 0 0 0 rgba(11, 107, 92, 0.7);
+  animation: crmPulse 1.8s infinite;
+}
+
+@keyframes crmPulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(11, 107, 92, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(11, 107, 92, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(11, 107, 92, 0);
+  }
+}
+
+.crm-icon-badge {
+  width: 62px;
+  height: 62px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #03363a 0%, #0b6b5c 100%);
+  color: #e8b84a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  box-shadow: 0 10px 25px -4px rgba(3, 54, 58, 0.35);
+  margin-bottom: 0.95rem;
+  border: 1px solid rgba(232, 184, 74, 0.25);
+}
+
+.crm-title {
+  font-family: var(--font-heading, 'Manrope', sans-serif);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #03363a;
+  line-height: 1.3;
+  margin: 0 0 0.45rem;
+  letter-spacing: -0.02em;
+}
+
+.crm-message {
+  font-size: 0.9rem;
+  color: #4a6360;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 92%;
+}
+
+/* Lead summary badge */
+.crm-lead-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8faf9;
+  border: 1px solid #e2ece8;
+  border-radius: 14px;
+  padding: 0.85rem 1.1rem;
+  margin-top: 1.25rem;
+}
+
+.crm-lead-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: left;
+}
+
+.crm-lead-service {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #03363a;
+}
+
+.crm-lead-name {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.crm-secure-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0b6b5c;
+  background: #e8f2ee;
+  padding: 0.25rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid #c4dfd6;
+}
+
+/* Priority Phone Card — Ultra Luxury Obsidian Teal with Gold Glow */
+.crm-phone-card {
+  background: linear-gradient(145deg, #03363a 0%, #062325 100%);
+  border-radius: 18px;
+  padding: 1.4rem;
+  margin-top: 1.25rem;
+  text-align: center;
+  color: #ffffff;
+  box-shadow: 0 14px 30px -6px rgba(3, 54, 58, 0.4);
+  border: 1px solid rgba(232, 184, 74, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.crm-phone-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(232, 184, 74, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.crm-phone-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9cb3af;
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.crm-phone-display {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  color: #e8b84a;
+  font-size: 1.55rem;
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 20px rgba(232, 184, 74, 0.3);
+  transition: all 0.2s ease;
+}
+
+.crm-phone-display:hover {
+  color: #f3ca65;
+  transform: scale(1.03);
+}
+
+.crm-phone-icon {
+  font-size: 1.25rem;
+  animation: crmRing 2.5s infinite ease-in-out;
+}
+
+@keyframes crmRing {
+  0%, 100% { transform: rotate(0); }
+  5%, 15% { transform: rotate(-14deg); }
+  10%, 20% { transform: rotate(14deg); }
+  25% { transform: rotate(0); }
+}
+
+.crm-phone-subtext {
+  font-size: 0.75rem;
+  color: #c4dfd6;
+  margin-top: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+/* Action Buttons Grid */
+.crm-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.crm-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 1rem 1.35rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-family: inherit;
+  width: 100%;
+}
+
+.crm-btn-call {
+  background: linear-gradient(135deg, #e8b84a 0%, #d4a038 100%);
+  color: #03363a;
+  box-shadow: 0 6px 20px rgba(232, 184, 74, 0.38);
+  font-family: var(--font-heading, inherit);
+  letter-spacing: 0.01em;
+}
+
+.crm-btn-call:hover {
+  background: linear-gradient(135deg, #f3ca65 0%, #e0ab3e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(232, 184, 74, 0.5);
+}
+
+/* Auto Redirect Countdown */
+.crm-countdown-card {
+  margin-top: 1.25rem;
+  background: #f8faf9;
+  border: 1px solid #e2ece8;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.crm-countdown-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #4a6360;
+  font-weight: 600;
+}
+
+.crm-clock-icon {
+  color: #0b6b5c;
+  font-size: 0.9rem;
+  margin-right: 0.4rem;
+}
+
+.crm-pause-btn {
+  background: #ffffff;
+  border: 1px solid #c4dfd6;
+  border-radius: 6px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.74rem;
+  color: #03363a;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.crm-pause-btn:hover {
+  background: #e8f2ee;
+  color: #0b6b5c;
+}
+
+.crm-progress-track {
+  width: 100%;
+  height: 5px;
+  background: #e2ece8;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.crm-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #03363a 0%, #0b6b5c 50%, #e8b84a 100%);
+  border-radius: 999px;
+}
+
+/* Dismiss Footer */
+.crm-footer {
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+.crm-dismiss-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.crm-dismiss-btn:hover {
+  color: #03363a;
+}

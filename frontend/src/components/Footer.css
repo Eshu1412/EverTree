@@ -1,0 +1,237 @@
+/* ══════════════════════════════════════════════════════
+   EverTree Solutions — Why Us & Footer Styles
+   Reference: theme-reference/Main.dc.html
+   ══════════════════════════════════════════════════════ */
+
+/* ── Why Us / Call-to-Action Band ────────────────────── */
+.cta-why-band {
+  background: #03363A;
+  color: #FFFFFF;
+  padding: 88px 0;
+  text-align: center;
+}
+
+.cta-why-content {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.cta-why-title {
+  margin: 0 0 16px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: clamp(32px, 4.2vw, 42px);
+  color: #FFFFFF;
+  line-height: 1.15;
+}
+
+.cta-why-text {
+  margin: 0 auto 36px;
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  max-width: 540px;
+  line-height: 1.6;
+  color: #CFE5DF;
+}
+
+.cta-why-btn {
+  display: inline-block;
+  background: #E8B84A;
+  color: #03363A;
+  padding: 16px 36px;
+  border-radius: 8px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.cta-why-btn:hover {
+  background: #dba838;
+  transform: translateY(-2px);
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+.footer {
+  padding: 64px 0 32px;
+  background: #F6F9F7;
+  border-top: 1px solid #DDE7E3;
+  color: #3F5655;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1.2fr 1.2fr 1.5fr;
+  gap: 40px;
+  margin-bottom: 48px;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: #03363A;
+}
+
+.footer-logo em {
+  font-style: normal;
+  color: #0B6B5C;
+}
+
+.footer-logo-frame {
+  width: 38px;
+  height: 38px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #DDE7E3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  box-shadow: 0 2px 6px rgba(3, 54, 58, 0.05);
+}
+
+.footer-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.footer-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #3F5655;
+  max-width: 320px;
+  margin: 0;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 10px;
+}
+
+.footer-social-link {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #EDF7F5;
+  color: #03363A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.footer-social-link:hover {
+  background: #03363A;
+  color: #FFFFFF;
+}
+
+.footer-column-title {
+  margin: 0 0 18px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: #03363A;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #3F5655;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #0B6B5C;
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #3F5655;
+  margin-bottom: 12px;
+}
+
+.footer-contact-icon {
+  color: #03363A;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.footer-tcpa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #EDF7F5;
+  border: 1px solid #DDE7E3;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #03363A;
+  margin-top: 8px;
+}
+
+/* ── Bottom Bar ──────────────────────────────────────── */
+.footer-bottom {
+  padding-top: 24px;
+  border-top: 1px solid #DDE7E3;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #5E7673;
+}
+
+.footer-copyright {
+  margin: 0;
+  font-weight: 600;
+  color: #3F5655;
+}
+
+.footer-disclaimer {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #5E7673;
+}
+
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}

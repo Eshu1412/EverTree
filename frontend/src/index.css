@@ -1,0 +1,347 @@
+/* ══════════════════════════════════════════════════════
+   EverTree Solutions — ULTRA PREMIUM DESIGN SYSTEM
+   Editorial, high-contrast, organic luxury aesthetic.
+   Colors: Deep Forest Teal, Emerald, Warm Amber Gold, Soft Sage Mint
+   ══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+
+:root {
+  /* ── Core Luxury Palette ───────────────────────────── */
+  --primary: #03363A;              /* Deep Forest Teal */
+  --primary-hover: #074C52;
+  --primary-active: #022528;
+  --primary-light: #EDF5F3;
+  --primary-50: #F6F9F7;
+  --primary-100: #DDE7E3;
+  --primary-glow: rgba(3, 54, 58, 0.12);
+
+  --secondary: #0B6B5C;            /* Lush Evergreen */
+  --secondary-hover: #085549;
+  --secondary-light: #EDF7F5;
+  --secondary-glow: rgba(11, 107, 92, 0.15);
+
+  --accent: #E8B84A;               /* Warm Imperial Gold / Amber */
+  --accent-hover: #D9A534;
+  --accent-light: #FFF9EB;
+  --accent-glow: rgba(232, 184, 74, 0.35);
+
+  --fg: #12302F;                   /* Deep Charcoal Pine */
+  --fg-secondary: #3F5655;         /* Muted Slate Forest */
+  --fg-tertiary: #5E7673;          /* Soft Granite Teal */
+  --fg-on-dark: #FFFFFF;
+  --fg-on-primary: #FFFFFF;
+  --fg-muted-on-dark: #CFE5DF;
+
+  --bg-white: #FFFFFF;
+  --bg-subtle: #F6F9F7;            /* Soft Sage Tint */
+  --bg-muted: #EFF4F2;             /* Tonal Pale Mint */
+  --bg-dark: #022528;              /* Ultra-Dark Pine */
+  --bg-dark-surface: #03363A;
+
+  --border: #DDE7E3;
+  --border-strong: #8AA3A0;
+  --border-brand: #03363A;
+  --border-gold: rgba(232, 184, 74, 0.4);
+
+  /* ── Gradients & Lighting ──────────────────────────── */
+  --gradient-teal: linear-gradient(145deg, #022528 0%, #03363A 55%, #064E54 100%);
+  --gradient-emerald: linear-gradient(135deg, #0B6B5C 0%, #075447 100%);
+  --gradient-gold: linear-gradient(135deg, #F3C458 0%, #E8B84A 50%, #C99424 100%);
+  --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #F9FBFB 100%);
+  --gradient-hero-mesh: radial-gradient(at 100% 0%, rgba(11, 107, 92, 0.08) 0px, transparent 50%),
+                        radial-gradient(at 0% 100%, rgba(232, 184, 74, 0.06) 0px, transparent 50%),
+                        #F6F9F7;
+
+  /* ── Typography ────────────────────────────────────── */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --fs-3xl: 2.5rem;
+  --fs-4xl: 3.25rem;
+  --fs-5xl: 4rem;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  --lh-tight: 1.12;
+  --lh-snug: 1.3;
+  --lh-normal: 1.6;
+  --lh-relaxed: 1.75;
+
+  --ls-tight: -0.03em;
+  --ls-normal: 0;
+  --ls-wide: 0.04em;
+  --ls-wider: 0.1em;
+
+  /* ── Elevation & Shadows ───────────────────────────── */
+  --shadow-sm: 0 2px 6px rgba(3, 54, 58, 0.04), 0 1px 2px rgba(3, 54, 58, 0.03);
+  --shadow-md: 0 8px 20px -3px rgba(3, 54, 58, 0.08), 0 3px 6px -2px rgba(3, 54, 58, 0.04);
+  --shadow-lg: 0 16px 36px -6px rgba(3, 54, 58, 0.10), 0 6px 12px -3px rgba(3, 54, 58, 0.05);
+  --shadow-xl: 0 24px 56px -10px rgba(3, 54, 58, 0.15), 0 10px 20px -5px rgba(3, 54, 58, 0.06);
+  --shadow-gold: 0 8px 24px -4px rgba(232, 184, 74, 0.38);
+
+  /* ── Radii & Layout ────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration: 220ms;
+  --duration-lg: 350ms;
+
+  --max-width: 1440px;
+  --nav-height: 78px;
+}
+
+/* ── Reset & Base ───────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  color: var(--fg);
+  background-color: var(--bg-white);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--primary);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  font-weight: var(--fw-extrabold);
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--duration) var(--ease);
+}
+
+a:hover {
+  color: var(--secondary);
+}
+
+button {
+  font-family: var(--font-heading);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+input, select, textarea {
+  font-family: var(--font);
+  font-size: 16px;
+}
+
+::selection {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+/* ── Page Transition Bar ────────────────────────────── */
+.page-transition-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-gold);
+  z-index: 9999;
+  transform-origin: 0% 50%;
+  pointer-events: none;
+  box-shadow: 0 0 14px rgba(232, 184, 74, 0.8);
+}
+
+/* ── Layout & Containers ────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 4rem);
+}
+
+.section {
+  padding: clamp(4rem, 7vw, 6rem) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-label {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin-bottom: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-title {
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-weight: var(--fw-extrabold);
+  margin-bottom: 1rem;
+  letter-spacing: var(--ls-tight);
+  line-height: var(--lh-tight);
+  color: var(--primary);
+}
+
+.section-subtitle {
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  color: var(--fg-secondary);
+  line-height: var(--lh-relaxed);
+  max-width: 580px;
+  margin-bottom: 2.5rem;
+}
+
+/* ── Buttons (Ultra-Rich Luxury Design) ─────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-extrabold);
+  font-size: 15px;
+  letter-spacing: var(--ls-wide);
+  border-radius: var(--radius-md);
+  transition: all var(--duration) var(--ease);
+  position: relative;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Primary Button: Deep Teal with High-End Depth */
+.btn-primary {
+  background: var(--gradient-teal);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 14px rgba(3, 54, 58, 0.22);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(145deg, #03363A 0%, #0B6B5C 100%);
+  box-shadow: 0 8px 24px rgba(11, 107, 92, 0.35);
+  color: #FFFFFF;
+}
+
+/* Gold CTA Button: Metallic Gold Sheen */
+.btn-gold {
+  background: var(--gradient-gold);
+  color: var(--primary);
+  border: none;
+  font-weight: 800;
+  box-shadow: var(--shadow-gold);
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #F8CE6A 0%, #EEBE51 50%, #D49D2B 100%);
+  box-shadow: 0 10px 28px -2px rgba(232, 184, 74, 0.55);
+  color: var(--primary);
+}
+
+/* Outline Button */
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: #FFFFFF;
+  box-shadow: 0 6px 18px rgba(3, 54, 58, 0.2);
+}
+
+.btn-secondary {
+  background: #FFFFFF;
+  color: var(--primary);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  background: var(--bg-subtle);
+}
+
+/* ── Scrollbars ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-subtle);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}
+
+/* ── Responsive Adjustments ─────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --nav-height: 68px;
+  }
+  .container {
+    padding: 0 1.25rem;
+  }
+}

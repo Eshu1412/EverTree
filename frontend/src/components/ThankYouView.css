@@ -1,0 +1,224 @@
+/* ══════════════════════════════════════════════════════
+   ThankYouView — Ultra-Premium EverTree Confirmation Screen
+   ══════════════════════════════════════════════════════ */
+
+.thankyou-view {
+  background: linear-gradient(180deg, #f6f9f7 0%, #e8f2ee 100%);
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: calc(var(--nav-height, 80px) + 2rem);
+  padding-bottom: 5rem;
+}
+
+.thankyou-card {
+  background: #ffffff;
+  padding: 3rem 2.5rem;
+  border-radius: 24px;
+  border: 1px solid rgba(3, 54, 58, 0.12);
+  box-shadow: 0 25px 60px -15px rgba(3, 54, 58, 0.12), 0 0 0 1px rgba(232, 184, 74, 0.15);
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.thankyou-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e8f2ee;
+  border: 1px solid #c4dfd6;
+  border-radius: 999px;
+  padding: 4px 14px 4px 6px;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-heading, 'Manrope', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #03363a;
+}
+
+.thankyou-brand-badge em {
+  font-style: normal;
+  color: #0b6b5c;
+}
+
+.thankyou-logo-frame {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+}
+
+.thankyou-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.thankyou-icon {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #03363a 0%, #0b6b5c 100%);
+  color: #e8b84a;
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.75rem;
+  box-shadow: 0 12px 28px rgba(3, 54, 58, 0.25);
+  border: 1px solid rgba(232, 184, 74, 0.3);
+}
+
+.thankyou-title {
+  font-family: var(--font-heading, 'Manrope', sans-serif);
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #03363a;
+  margin-bottom: 0.85rem;
+  letter-spacing: -0.02em;
+}
+
+.thankyou-message {
+  font-size: 1rem;
+  color: #4a6360;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.thankyou-message strong {
+  color: #03363a;
+}
+
+/* Summary Card */
+.thankyou-summary-card {
+  background: #f8faf9;
+  border: 1px solid #e2ece8;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.thankyou-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #03363a;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid #e2ece8;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.thankyou-shield {
+  font-size: 16px;
+  color: #0b6b5c;
+}
+
+.thankyou-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.thankyou-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.thankyou-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.thankyou-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #03363a;
+  word-break: break-word;
+}
+
+.thankyou-service-badge {
+  color: #0b6b5c;
+  font-weight: 800;
+}
+
+.thankyou-answers-section {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #c4dfd6;
+}
+
+.thankyou-answers-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #03363a;
+  margin-bottom: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.thankyou-answers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.thankyou-answer-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.82rem;
+  padding: 4px 0;
+}
+
+.thankyou-ans-key {
+  color: #4a6360;
+  font-weight: 600;
+}
+
+.thankyou-ans-val {
+  color: #03363a;
+  font-weight: 700;
+}
+
+.thankyou-btn {
+  height: 52px;
+  padding: 0 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #03363a 0%, #0b6b5c 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 6px 20px rgba(3, 54, 58, 0.28);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thankyou-btn:hover {
+  background: linear-gradient(135deg, #022528 0%, #085246 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(3, 54, 58, 0.38);
+}

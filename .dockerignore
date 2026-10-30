@@ -1,0 +1,46 @@
+# Version control
+.git
+.gitignore
+
+# Environment & secrets (never leak credentials into Docker image)
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+frontend/.env.*
+!.frontend/.env.example
+
+# Local database files
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+backend/*.db
+backend/*.db-*
+
+# Node / Frontend dependencies & local build outputs
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+.npm/
+
+# Python caches, bytecode & virtual environments
+__pycache__/
+backend/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Scratch, references & documentation assets
+smartbuyer-source/
+theme-reference/
+EverTree-Logo-Pack/
+scratch/
+*.log
+.DS_Store
+Thumbs.db

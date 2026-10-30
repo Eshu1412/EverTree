@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+.npm/
+
+# Production build outputs
+dist/
+frontend/dist/
+
+# Local databases & storage
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+backend/*.db
+backend/*.db-*
+
+# Environment variables & secrets (NEVER commit credentials)
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Python cache & virtual environments
+__pycache__/
+backend/__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# References & temporary design files (not part of production application)
+smartbuyer-source/
+theme-reference/
+EverTree-Logo-Pack/
+scratch/
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
