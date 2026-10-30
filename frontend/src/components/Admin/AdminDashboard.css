@@ -163,10 +163,12 @@
               linear-gradient(180deg, #F6F9F7 0%, #EDF5F3 100%);
 }
 
-[data-theme="dark"] .admin-login-container {
-  background: radial-gradient(circle at 18% 18%, rgba(11, 107, 92, 0.28) 0%, transparent 50%),
-              radial-gradient(circle at 82% 82%, rgba(232, 184, 74, 0.15) 0%, transparent 50%),
-              linear-gradient(180deg, #022528 0%, #011C1E 100%);
+[data-theme="dark"].admin-login-container,
+[data-theme="dark"] .admin-login-container,
+.admin-login-container[data-theme="dark"] {
+  background: radial-gradient(circle at 18% 18%, rgba(11, 107, 92, 0.35) 0%, transparent 55%),
+              radial-gradient(circle at 82% 82%, rgba(232, 184, 74, 0.18) 0%, transparent 55%),
+              linear-gradient(180deg, #022528 0%, #011C1E 100%) !important;
 }
 
 .admin-login-theme-toggle {
@@ -211,11 +213,13 @@
   position: relative;
 }
 
-[data-theme="dark"] .admin-login-box {
+[data-theme="dark"] .admin-login-box,
+.admin-login-container[data-theme="dark"] .admin-login-box {
   background: rgba(3, 54, 58, 0.95);
   border: 1px solid rgba(207, 229, 223, 0.16);
   border-top: 4.5px solid #E8B84A;
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(232, 184, 74, 0.12);
+  backdrop-filter: blur(12px);
 }
 
 .admin-brand-header {
@@ -238,11 +242,13 @@
   color: #0B6B5C;
 }
 
-[data-theme="dark"] .admin-brand-title {
+[data-theme="dark"] .admin-brand-title,
+.admin-login-container[data-theme="dark"] .admin-brand-title {
   color: #FFFFFF;
 }
 
-[data-theme="dark"] .admin-brand-title span {
+[data-theme="dark"] .admin-brand-title span,
+.admin-login-container[data-theme="dark"] .admin-brand-title span {
   color: #E8B84A;
 }
 
@@ -260,10 +266,98 @@
   margin-bottom: 0.75rem;
 }
 
-[data-theme="dark"] .admin-login-badge {
+[data-theme="dark"] .admin-login-badge,
+.admin-login-container[data-theme="dark"] .admin-login-badge {
   background: rgba(232, 184, 74, 0.12);
   color: #E8B84A;
   border-color: rgba(232, 184, 74, 0.28);
+}
+
+[data-theme="dark"] .admin-login-subtitle,
+.admin-login-container[data-theme="dark"] .admin-login-subtitle {
+  color: #CFE5DF;
+}
+
+/* Demo Credentials Helper */
+.admin-demo-helper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 10px;
+  background: #E8F2EE;
+  border: 1px solid #C4DFD6;
+  font-size: 0.78rem;
+  margin-bottom: 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.admin-demo-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #06453A;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-demo-badge code {
+  background: rgba(3, 54, 58, 0.08);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #03363A;
+}
+
+.admin-demo-fill-btn {
+  background: #0B6B5C;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.admin-demo-fill-btn:hover {
+  background: #085549;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .admin-demo-helper,
+.admin-login-container[data-theme="dark"] .admin-demo-helper {
+  background: rgba(2, 41, 45, 0.85);
+  border: 1px solid rgba(207, 229, 223, 0.18);
+}
+
+[data-theme="dark"] .admin-demo-badge,
+.admin-login-container[data-theme="dark"] .admin-demo-badge {
+  color: #CFE5DF;
+}
+
+[data-theme="dark"] .admin-demo-badge code,
+.admin-login-container[data-theme="dark"] .admin-demo-badge code {
+  background: rgba(232, 184, 74, 0.18);
+  color: #E8B84A;
+}
+
+[data-theme="dark"] .admin-demo-fill-btn,
+.admin-login-container[data-theme="dark"] .admin-demo-fill-btn {
+  background: #E8B84A;
+  color: #022528;
+}
+
+[data-theme="dark"] .admin-demo-fill-btn:hover,
+.admin-login-container[data-theme="dark"] .admin-demo-fill-btn:hover {
+  background: #F3C458;
 }
 
 .admin-login-subtitle {
@@ -314,15 +408,91 @@
   box-shadow: 0 6px 20px rgba(3, 54, 58, 0.35);
 }
 
-[data-theme="dark"] .admin-login-btn {
+[data-theme="dark"] .admin-login-btn,
+.admin-login-container[data-theme="dark"] .admin-login-btn {
   background: linear-gradient(135deg, #E8B84A 0%, #D4A038 100%);
   color: #022528;
   box-shadow: 0 4px 16px rgba(232, 184, 74, 0.3);
 }
 
-[data-theme="dark"] .admin-login-btn:hover {
+[data-theme="dark"] .admin-login-btn:hover,
+.admin-login-container[data-theme="dark"] .admin-login-btn:hover {
   background: linear-gradient(135deg, #F3C458 0%, #E8B84A 100%);
   box-shadow: 0 6px 22px rgba(232, 184, 74, 0.45);
+}
+
+.admin-password-toggle {
+  position: absolute;
+  right: 0.85rem;
+  background: none;
+  border: none;
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  border-radius: 6px;
+  transition: color 0.15s ease;
+}
+
+.admin-password-toggle:hover {
+  color: var(--md-primary);
+}
+
+[data-theme="dark"] .admin-password-toggle,
+.admin-login-container[data-theme="dark"] .admin-password-toggle {
+  color: #8AA3A0;
+}
+
+[data-theme="dark"] .admin-password-toggle:hover,
+.admin-login-container[data-theme="dark"] .admin-password-toggle:hover {
+  color: #E8B84A;
+}
+
+[data-theme="dark"] .admin-input,
+.admin-login-container[data-theme="dark"] .admin-input {
+  background: rgba(1, 30, 33, 0.85);
+  border: 1.5px solid rgba(207, 229, 223, 0.22);
+  color: #F6F9F7;
+}
+
+[data-theme="dark"] .admin-input::placeholder,
+.admin-login-container[data-theme="dark"] .admin-input::placeholder {
+  color: rgba(207, 229, 223, 0.55);
+}
+
+[data-theme="dark"] .admin-input:focus,
+.admin-login-container[data-theme="dark"] .admin-input:focus {
+  border-color: #E8B84A;
+  box-shadow: 0 0 0 3px rgba(232, 184, 74, 0.2);
+  background: rgba(1, 22, 24, 0.95);
+}
+
+[data-theme="dark"] .admin-form-label,
+.admin-login-container[data-theme="dark"] .admin-form-label {
+  color: #CFE5DF;
+}
+
+[data-theme="dark"] .admin-input-icon,
+.admin-login-container[data-theme="dark"] .admin-input-icon {
+  color: #8AA3A0;
+}
+
+[data-theme="dark"] .admin-theme-toggle-btn,
+.admin-login-container[data-theme="dark"] .admin-theme-toggle-btn {
+  background: #053D42;
+  border: 1.5px solid rgba(207, 229, 223, 0.25);
+  color: #F6F9F7;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .admin-theme-toggle-btn:hover,
+.admin-login-container[data-theme="dark"] .admin-theme-toggle-btn:hover {
+  background: #06454B;
+  border-color: #E8B84A;
+  color: #E8B84A;
 }
 
 .admin-login-btn:disabled {

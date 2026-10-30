@@ -43,6 +43,14 @@ export default function AdminDashboard({ onNavigateHome }) {
     setSnackbars(prev => prev.filter(s => s.id !== id));
   };
 
+  // Synchronize data-theme to document.documentElement
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    return () => {
+      document.documentElement.removeAttribute('data-theme');
+    };
+  }, [theme]);
+
   // Always clear any stored session on mount so that every visit to #admin asks for login
   useEffect(() => {
     localStorage.removeItem('adminToken');

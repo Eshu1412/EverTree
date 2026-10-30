@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiLock, FiUser, FiArrowRight, FiShield, FiAlertCircle, FiSun, FiMoon, FiArrowLeft } from 'react-icons/fi';
+import { 
+  FiLock, FiUser, FiArrowRight, FiShield, 
+  FiAlertCircle, FiSun, FiMoon, FiArrowLeft,
+  FiEye, FiEyeOff, FiKey
+} from 'react-icons/fi';
 import './AdminDashboard.css';
 
 export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTheme, onNavigateHome }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleFillDemo = () => {
+    setUsername('admin');
+    setPassword('EverTreeDemo!2026');
+    setError('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,6 +55,7 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
       {onToggleTheme && (
         <div className="admin-login-theme-toggle">
           <button 
+            type="button"
             className="admin-theme-toggle-btn" 
             onClick={onToggleTheme}
             title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
@@ -86,6 +98,23 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
           Secure sign-in for platform managers and quote specialists.
         </p>
 
+        {/* Demo Credentials Quick Helper */}
+        <div className="admin-demo-helper">
+          <div className="admin-demo-badge">
+            <FiKey className="admin-demo-icon" />
+            <span>Default:</span>
+            <code>admin</code> / <code>EverTreeDemo!2026</code>
+          </div>
+          <button
+            type="button"
+            className="admin-demo-fill-btn"
+            onClick={handleFillDemo}
+            title="Auto-fill credentials"
+          >
+            Auto-fill
+          </button>
+        </div>
+
         {error && (
           <div className="admin-error-banner">
             <FiAlertCircle />
@@ -105,6 +134,7 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                autoComplete="username"
               />
             </div>
           </div>
@@ -114,13 +144,23 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
             <div className="admin-input-wrapper">
               <FiLock className="admin-input-icon" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 className="admin-input"
+                style={{ paddingRight: '2.6rem' }}
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
               />
+              <button
+                type="button"
+                className="admin-password-toggle"
+                onClick={() => setShowPassword(v => !v)}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
             </div>
           </div>
 
@@ -136,8 +176,19 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
         {onNavigateHome && (
           <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
             <button
+              type="button"
               className="admin-btn-secondary admin-login-back-btn"
-              style={{ border: 'none', background: 'transparent', color: 'var(--md-secondary)', fontSize: '0.85rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}
+              style={{ 
+                border: 'none', 
+                background: 'transparent', 
+                color: 'var(--md-secondary)', 
+                fontSize: '0.85rem', 
+                cursor: 'pointer', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '0.4rem', 
+                fontWeight: 600 
+              }}
               onClick={onNavigateHome}
             >
               <FiArrowLeft /> Return to Consumer Site

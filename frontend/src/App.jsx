@@ -45,12 +45,23 @@ export default function App() {
     const checkHash = () => {
       if (window.location.hash === '#admin' || window.location.pathname === '/admin') {
         setViewState('admin')
+        document.title = 'EverTree Solutions | Admin Portal'
+      } else {
+        if (viewState === 'admin') {
+          setViewState('home')
+          document.documentElement.removeAttribute('data-theme')
+        }
+        document.title = 'EverTree Solutions | Compare Insurance, Home Services, Finance & Flights'
       }
     }
     checkHash()
     window.addEventListener('hashchange', checkHash)
-    return () => window.removeEventListener('hashchange', checkHash)
-  }, [])
+    window.addEventListener('popstate', checkHash)
+    return () => {
+      window.removeEventListener('hashchange', checkHash)
+      window.removeEventListener('popstate', checkHash)
+    }
+  }, [viewState])
 
   // Fetch admin contact configuration on mount
   useEffect(() => {
@@ -90,9 +101,15 @@ export default function App() {
   }, [])
 
   const handleNavigateHome = () => {
-    if (window.location.hash === '#admin') {
-      window.location.hash = ''
+    if (window.location.hash === '#admin' || window.location.pathname === '/admin') {
+      try {
+        window.history.pushState(null, '', window.location.pathname === '/admin' ? '/' : window.location.pathname)
+      } catch {}
+      if (window.location.hash === '#admin') {
+        window.location.hash = ''
+      }
     }
+    document.documentElement.removeAttribute('data-theme')
     try {
       const cached = localStorage.getItem('contact_config')
       if (cached) setContactConfig(JSON.parse(cached))
