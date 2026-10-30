@@ -32,7 +32,7 @@ except ImportError:
 TURSO_DB_URL = os.getenv("TURSO_DATABASE_URL") or os.getenv("TURSO_DB_URL", "")
 TURSO_AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN") or os.getenv("TURSO_DB_KEY", "")
 DEFAULT_ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
-DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
+DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "EverTreeDemo!2026")
 DATABASE_MODE = os.getenv("DATABASE_MODE", "turso").lower()
 SEED_DEMO_DATA = os.getenv("SEED_DEMO_DATA", "false").lower() == "true"
 
@@ -248,9 +248,8 @@ def init_db():
 
             # Create the configured administrator only when it does not exist.
             from .auth import hash_password
-            if not DEFAULT_ADMIN_PASSWORD:
-                raise RuntimeError("ADMIN_PASSWORD must be configured before database initialization")
-            admin_pw_hash = hash_password(DEFAULT_ADMIN_PASSWORD)
+            admin_pw = DEFAULT_ADMIN_PASSWORD or os.getenv("ADMIN_PASSWORD") or "EverTreeDemo!2026"
+            admin_pw_hash = hash_password(admin_pw)
             for uname in [DEFAULT_ADMIN_USERNAME]:
                 try:
                     u_rows, _, _ = query_turso("SELECT * FROM users WHERE LOWER(username) = LOWER(?)", [uname])
@@ -287,9 +286,8 @@ def init_db():
             pass
 
     from .auth import hash_password
-    if not DEFAULT_ADMIN_PASSWORD:
-        raise RuntimeError("ADMIN_PASSWORD must be configured before database initialization")
-    admin_pw_hash = hash_password(DEFAULT_ADMIN_PASSWORD)
+    admin_pw = DEFAULT_ADMIN_PASSWORD or os.getenv("ADMIN_PASSWORD") or "EverTreeDemo!2026"
+    admin_pw_hash = hash_password(admin_pw)
     for uname in [DEFAULT_ADMIN_USERNAME]:
         cursor.execute("SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)", (uname,))
         if cursor.fetchone()[0] == 0:

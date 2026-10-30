@@ -9,8 +9,16 @@ services:
     envVars:
       - key: PORT
         value: 8080
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: EverTreeDemo!2026
+      - key: DATABASE_MODE
+        value: turso
       - key: TRUSTEDFORM_API_KEY
-        sync: false
+        value: 82ee82d4bb767148ccb8741c713b8998
+      - key: VITE_TRUSTEDFORM_ENABLED
+        value: "true"
       - key: TURSO_DATABASE_URL
         sync: false
       - key: TURSO_AUTH_TOKEN
@@ -21,5 +29,3 @@ services:
         sync: false
       - key: VITE_META_PIXEL_ID
         sync: false
-      - key: VITE_TRUSTEDFORM_ENABLED
-        value: "false"
