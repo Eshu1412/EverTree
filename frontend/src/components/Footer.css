@@ -235,3 +235,129 @@
     gap: 28px;
   }
 }
+
+
+/* ── Interactive Legal Modal & Footer Button Links ───── */
+.footer-link-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #3F5655;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.footer-link-btn:hover {
+  color: #0B6B5C;
+}
+
+.legal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 54, 58, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.legal-modal-content {
+  background: #FFFFFF;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 64px -12px rgba(3, 54, 58, 0.35);
+  border: 1.5px solid #03363A;
+}
+
+.legal-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #DDE7E3;
+  background: #F6F9F7;
+}
+
+.legal-modal-header h3 {
+  margin: 0;
+  font-family: 'Manrope', sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  color: #03363A;
+}
+
+.legal-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: #5E7673;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.legal-modal-close:hover {
+  background: #EDF7F5;
+  color: #03363A;
+}
+
+.legal-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #3F5655;
+  line-height: 1.6;
+}
+
+.legal-modal-body h4 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #03363A;
+  margin: 16px 0 6px;
+}
+
+.legal-modal-body p {
+  margin: 0 0 12px;
+}
+
+.legal-modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid #DDE7E3;
+  background: #F6F9F7;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.legal-modal-done-btn {
+  background: #03363A;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.legal-modal-done-btn:hover {
+  background: #0B6B5C;
+}

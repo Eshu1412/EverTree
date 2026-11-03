@@ -239,6 +239,48 @@ class FlightBookingUpdateRequest(BaseModel):
     trip_type: Optional[str] = None
 
 
+class BuyerCreateRequest(BaseModel):
+    full_name: str
+    company: str
+    email: str
+    phone: str
+    vertical: str
+    message: Optional[str] = ""
+    notes: Optional[str] = ""
+
+
+class BuyerUpdateRequest(BaseModel):
+    full_name: Optional[str] = None
+    company: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    vertical: Optional[str] = None
+    message: Optional[str] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class PublisherCreateRequest(BaseModel):
+    full_name: str
+    company: str
+    email: str
+    phone: str
+    vertical: str
+    message: Optional[str] = ""
+    notes: Optional[str] = ""
+
+
+class PublisherUpdateRequest(BaseModel):
+    full_name: Optional[str] = None
+    company: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    vertical: Optional[str] = None
+    message: Optional[str] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+
+
 # ── Data ────────────────────────────────────────────────
 SERVICES = [
     {
@@ -885,6 +927,290 @@ async def import_backup(backup_data: dict):
         raise HTTPException(status_code=400, detail="Invalid backup file format")
     result = database.restore_system_backup(backup_data)
     return result
+
+
+# ── Buyers & Publishers Marketplace APIs ────────────────
+
+@app.post("/api/buyers/register")
+async def register_buyer(req: BuyerCreateRequest):
+    if not req.full_name.strip():
+        raise HTTPException(status_code=400, detail="Full Name is required")
+    if not req.email.strip():
+        raise HTTPException(status_code=400, detail="Work Email is required")
+    if not req.phone.strip():
+        raise HTTPException(status_code=400, detail="Phone Number is required")
+
+    buyer_id = database.create_buyer({
+        "full_name": req.full_name.strip(),
+        "company": req.company.strip(),
+        "email": req.email.strip(),
+        "phone": req.phone.strip(),
+        "vertical": req.vertical.strip() if req.vertical else "Other",
+        "message": req.message.strip() if req.message else "",
+        "status": "pending",
+        "notes": req.notes or ""
+    })
+
+    return {
+        "success": True,
+        "buyer_id": buyer_id,
+        "message": f"Thank you, {req.full_name}! Your Buyer Access request for {req.vertical} has been received. Our marketplace manager will reach out within 24 hours."
+    }
+
+
+@app.get("/api/admin/buyers")
+async def list_admin_buyers(
+    search: str = "",
+    status: str = "",
+    vertical: str = "",
+    page: int = 1,
+    per_page: int = 20,
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    return database.get_buyers(
+        search=search,
+        status=status,
+        vertical=vertical,
+        page=page,
+        per_page=per_page,
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
+
+
+@app.get("/api/admin/buyers/export-csv")
+async def export_buyers_csv(
+    search: str = "",
+    status: str = "",
+    vertical: str = "",
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    result = database.get_buyers(
+        search=search,
+        status=status,
+        vertical=vertical,
+        page=1,
+        per_page=0,
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
+    buyers_list = result.get("buyers", [])
+
+    output = io.StringIO()
+    output.write('\ufeff')
+    writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
+    writer.writerow([
+        "ID", "Full Name", "Company", "Email", "Phone", "Vertical",
+        "Message", "Status", "Notes", "Created At"
+    ])
+
+    for b in buyers_list:
+        writer.writerow([
+            b.get("id", ""),
+            b.get("full_name", ""),
+            b.get("company", ""),
+            b.get("email", ""),
+            b.get("phone", ""),
+            b.get("vertical", ""),
+            b.get("message", ""),
+            b.get("status", ""),
+            b.get("notes", ""),
+            b.get("created_at", "")
+        ])
+
+    csv_data = output.getvalue()
+    timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return Response(
+        content=csv_data,
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="evertree_buyers_{timestamp_str}.csv"'
+        }
+    )
+
+
+@app.get("/api/admin/buyers/{buyer_id}")
+async def get_buyer_details(buyer_id: int):
+    buyer = database.get_buyer_by_id(buyer_id)
+    if not buyer:
+        raise HTTPException(status_code=404, detail="Buyer record not found")
+    return buyer
+
+
+@app.put("/api/admin/buyers/{buyer_id}")
+async def update_buyer_details(buyer_id: int, req: BuyerUpdateRequest):
+    data = req.dict(exclude_none=True)
+    success = database.update_buyer(buyer_id, data)
+    if not success:
+        raise HTTPException(status_code=400, detail="Failed to update buyer or no fields changed")
+    return {
+        "success": True,
+        "message": "Buyer record updated successfully",
+        "buyer": database.get_buyer_by_id(buyer_id)
+    }
+
+
+@app.delete("/api/admin/buyers/{buyer_id}")
+async def delete_buyer_record(buyer_id: int):
+    success = database.delete_buyer(buyer_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Buyer record not found")
+    return {"success": True, "message": "Buyer record deleted successfully"}
+
+
+@app.post("/api/admin/buyers/bulk-status")
+async def bulk_update_buyers_status(req: BulkStatusRequest):
+    count = database.bulk_update_buyer_status(req.lead_ids, req.status)
+    return {"success": True, "updated_count": count, "message": f"Updated {count} buyers to {req.status}"}
+
+
+@app.post("/api/admin/buyers/bulk-delete")
+async def bulk_delete_buyers_records(req: BulkDeleteRequest):
+    count = database.bulk_delete_buyers(req.lead_ids)
+    return {"success": True, "deleted_count": count, "message": f"Deleted {count} buyers"}
+
+
+@app.post("/api/publishers/register")
+async def register_publisher(req: PublisherCreateRequest):
+    if not req.full_name.strip():
+        raise HTTPException(status_code=400, detail="Full Name is required")
+    if not req.email.strip():
+        raise HTTPException(status_code=400, detail="Work Email is required")
+    if not req.phone.strip():
+        raise HTTPException(status_code=400, detail="Phone Number is required")
+
+    pub_id = database.create_publisher({
+        "full_name": req.full_name.strip(),
+        "company": req.company.strip(),
+        "email": req.email.strip(),
+        "phone": req.phone.strip(),
+        "vertical": req.vertical.strip() if req.vertical else "Other",
+        "message": req.message.strip() if req.message else "",
+        "status": "pending",
+        "notes": req.notes or ""
+    })
+
+    return {
+        "success": True,
+        "publisher_id": pub_id,
+        "message": f"Thank you, {req.full_name}! Your Publisher application for {req.vertical} has been received. Our partner team will reach out within 24 hours."
+    }
+
+
+@app.get("/api/admin/publishers")
+async def list_admin_publishers(
+    search: str = "",
+    status: str = "",
+    vertical: str = "",
+    page: int = 1,
+    per_page: int = 20,
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    return database.get_publishers(
+        search=search,
+        status=status,
+        vertical=vertical,
+        page=page,
+        per_page=per_page,
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
+
+
+@app.get("/api/admin/publishers/export-csv")
+async def export_publishers_csv(
+    search: str = "",
+    status: str = "",
+    vertical: str = "",
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    result = database.get_publishers(
+        search=search,
+        status=status,
+        vertical=vertical,
+        page=1,
+        per_page=0,
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
+    pubs_list = result.get("publishers", [])
+
+    output = io.StringIO()
+    output.write('\ufeff')
+    writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
+    writer.writerow([
+        "ID", "Full Name", "Company", "Email", "Phone", "Vertical",
+        "Message", "Status", "Notes", "Created At"
+    ])
+
+    for p in pubs_list:
+        writer.writerow([
+            p.get("id", ""),
+            p.get("full_name", ""),
+            p.get("company", ""),
+            p.get("email", ""),
+            p.get("phone", ""),
+            p.get("vertical", ""),
+            p.get("message", ""),
+            p.get("status", ""),
+            p.get("notes", ""),
+            p.get("created_at", "")
+        ])
+
+    csv_data = output.getvalue()
+    timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return Response(
+        content=csv_data,
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="evertree_publishers_{timestamp_str}.csv"'
+        }
+    )
+
+
+@app.get("/api/admin/publishers/{pub_id}")
+async def get_publisher_details(pub_id: int):
+    publisher = database.get_publisher_by_id(pub_id)
+    if not publisher:
+        raise HTTPException(status_code=404, detail="Publisher record not found")
+    return publisher
+
+
+@app.put("/api/admin/publishers/{pub_id}")
+async def update_publisher_details(pub_id: int, req: PublisherUpdateRequest):
+    data = req.dict(exclude_none=True)
+    success = database.update_publisher(pub_id, data)
+    if not success:
+        raise HTTPException(status_code=400, detail="Failed to update publisher or no fields changed")
+    return {
+        "success": True,
+        "message": "Publisher record updated successfully",
+        "publisher": database.get_publisher_by_id(pub_id)
+    }
+
+
+@app.delete("/api/admin/publishers/{pub_id}")
+async def delete_publisher_record(pub_id: int):
+    success = database.delete_publisher(pub_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Publisher record not found")
+    return {"success": True, "message": "Publisher record deleted successfully"}
+
+
+@app.post("/api/admin/publishers/bulk-status")
+async def bulk_update_publishers_status(req: BulkStatusRequest):
+    count = database.bulk_update_publisher_status(req.lead_ids, req.status)
+    return {"success": True, "updated_count": count, "message": f"Updated {count} publishers to {req.status}"}
+
+
+@app.post("/api/admin/publishers/bulk-delete")
+async def bulk_delete_publishers_records(req: BulkDeleteRequest):
+    count = database.bulk_delete_publishers(req.lead_ids)
+    return {"success": True, "deleted_count": count, "message": f"Deleted {count} publishers"}
 
 
 # ── Contact Us & Form Redirect Configuration API ────────

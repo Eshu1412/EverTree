@@ -205,7 +205,10 @@ export default function App() {
               exit={{ opacity: 0, y: -20, scale: 0.995 }}
               transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
             >
-              <Hero onQuoteClick={() => handleOpenQuote('')} />
+              <Hero 
+                onQuoteClick={() => handleOpenQuote('')} 
+                onFormSubmitted={handleFormSubmitted}
+              />
               <Services onSelectSubVertical={handleNavigateSubVertical} />
               <HowItWorks />
               <FAQ onQuoteClick={() => handleOpenQuote('')} />

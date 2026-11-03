@@ -72,7 +72,7 @@ export default function AdminStaff({ onShowSnackbar }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        alert(data.detail || 'Could not delete user');
+        if (onShowSnackbar) onShowSnackbar(data.detail || 'Could not delete user', 'error');
         return;
       }
       if (onShowSnackbar) onShowSnackbar(`Access revoked for ${username}`, 'info');

@@ -3,10 +3,17 @@ import { motion } from 'framer-motion';
 import { 
   FiUsers, FiTrendingUp, FiCheckCircle, FiShield, 
   FiArrowUpRight, FiClock, FiActivity, FiLayers, 
-  FiCalendar, FiFilter, FiZap, FiBarChart2 
+  FiCalendar, FiFilter, FiZap, FiBarChart2,
+  FiShoppingBag, FiRadio, FiArrowRight
 } from 'react-icons/fi';
 
-export default function AdminOverview({ stats, onNavigateToLeads, onFilterByService }) {
+export default function AdminOverview({ 
+  stats, 
+  onNavigateToLeads, 
+  onNavigateToBuyers, 
+  onNavigateToPublishers, 
+  onFilterByService 
+}) {
   const [dateRange, setDateRange] = useState('7d'); // 'today' | '7d' | '30d' | 'all'
 
   if (!stats) {
@@ -22,6 +29,8 @@ export default function AdminOverview({ stats, onNavigateToLeads, onFilterByServ
     total_leads = 0,
     new_today = 0,
     new_this_week = 0,
+    total_buyers = 0,
+    total_publishers = 0,
     status_counts = {},
     service_counts = {},
     daily_trends = [],
@@ -209,6 +218,117 @@ export default function AdminOverview({ stats, onNavigateToLeads, onFilterByServ
         </div>
       </div>
 
+      {/* ── Marketplace Hubs Cards (Buyers & Publishers) ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem', margin: '1.5rem 0' }}>
+        {/* Buyers Hub Banner */}
+        <div
+          className="admin-panel"
+          style={{
+            margin: 0,
+            padding: '1.25rem 1.5rem',
+            background: 'linear-gradient(135deg, rgba(3, 54, 58, 0.04) 0%, rgba(59, 130, 246, 0.08) 100%)',
+            border: '1.5px solid rgba(59, 130, 246, 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+            cursor: onNavigateToBuyers ? 'pointer' : 'default'
+          }}
+          onClick={onNavigateToBuyers}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: '#3b82f6',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.35rem'
+              }}
+            >
+              <FiShoppingBag />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Marketplace Demand
+              </div>
+              <h4 style={{ margin: '2px 0 0', fontSize: '1.1rem', fontWeight: 800, color: 'var(--md-on-surface)' }}>
+                {total_buyers} Registered Buyer{total_buyers !== 1 ? 's' : ''}
+              </h4>
+              <span style={{ fontSize: '0.82rem', color: 'var(--md-on-surface-variant)' }}>
+                Advertisers purchasing inbound leads
+              </span>
+            </div>
+          </div>
+          <button
+            className="admin-btn admin-btn-sm"
+            style={{ background: '#3b82f6', color: '#ffffff', border: 'none' }}
+            onClick={(e) => { e.stopPropagation(); if (onNavigateToBuyers) onNavigateToBuyers(); }}
+          >
+            <span>Open Hub</span>
+            <FiArrowRight />
+          </button>
+        </div>
+
+        {/* Publishers Hub Banner */}
+        <div
+          className="admin-panel"
+          style={{
+            margin: 0,
+            padding: '1.25rem 1.5rem',
+            background: 'linear-gradient(135deg, rgba(3, 54, 58, 0.04) 0%, rgba(0, 135, 90, 0.08) 100%)',
+            border: '1.5px solid rgba(0, 135, 90, 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+            cursor: onNavigateToPublishers ? 'pointer' : 'default'
+          }}
+          onClick={onNavigateToPublishers}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: '#00875a',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.35rem'
+              }}
+            >
+              <FiRadio />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#00875a', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Traffic Supply
+              </div>
+              <h4 style={{ margin: '2px 0 0', fontSize: '1.1rem', fontWeight: 800, color: 'var(--md-on-surface)' }}>
+                {total_publishers} Publisher Partner{total_publishers !== 1 ? 's' : ''}
+              </h4>
+              <span style={{ fontSize: '0.82rem', color: 'var(--md-on-surface-variant)' }}>
+                Media buyers &amp; traffic affiliates
+              </span>
+            </div>
+          </div>
+          <button
+            className="admin-btn admin-btn-sm"
+            style={{ background: '#00875a', color: '#ffffff', border: 'none' }}
+            onClick={(e) => { e.stopPropagation(); if (onNavigateToPublishers) onNavigateToPublishers(); }}
+          >
+            <span>Open Hub</span>
+            <FiArrowRight />
+          </button>
+        </div>
+      </div>
+
       {/* Charts & Funnel Grid */}
       <div className="admin-charts-grid">
         {/* Left: Trend Sparkline & Service Verticals */}
@@ -217,100 +337,106 @@ export default function AdminOverview({ stats, onNavigateToLeads, onFilterByServ
             <div>
               <h3 className="admin-panel-title">
                 <FiBarChart2 style={{ color: '#0B6B5C' }} />
-                Lead Volume Trend & Service Breakdown
+                Lead Volume Trend &amp; Service Breakdown
               </h3>
               <span style={{ fontSize: '0.82rem', color: 'var(--md-on-surface-variant)' }}>
-                7-day daily activity curve & vertical demand share
+                Rolling traffic trajectory across core consumer verticals
               </span>
             </div>
-            <button className="admin-btn-secondary" onClick={onNavigateToLeads}>
-              View All <FiArrowUpRight />
-            </button>
           </div>
 
-          {/* SVG Area Chart */}
-          <div className="admin-area-chart-container">
-            <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+          {/* SVG Trend Sparkline */}
+          <div style={{ padding: '0 0.5rem 1.5rem', borderBottom: '1px solid var(--md-outline-variant)' }}>
+            <svg 
+              viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
+              style={{ width: '100%', height: '120px', overflow: 'visible' }}
+            >
               <defs>
-                <linearGradient id="trendGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#0B6B5C" stopOpacity="0.35" />
+                <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0B6B5C" stopOpacity="0.25" />
                   <stop offset="100%" stopColor="#0B6B5C" stopOpacity="0.0" />
                 </linearGradient>
               </defs>
               <path d={areaD} fill="url(#trendGradient)" />
-              <path d={pathD} fill="none" stroke="#0B6B5C" strokeWidth="3" strokeLinecap="round" />
+              <path d={pathD} fill="none" stroke="#0B6B5C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               {points.map((p, i) => (
-                <g key={i}>
-                  <circle cx={p.x} cy={p.y} r="4" fill="#ffffff" stroke="#0B6B5C" strokeWidth="2.5" />
-                  <text x={p.x} y={chartHeight + 14} textAnchor="middle" fontSize="10" fill="var(--md-on-surface-variant)" fontWeight="600">
-                    {p.day.slice(-5)}
-                  </text>
-                </g>
+                <circle 
+                  key={i} 
+                  cx={p.x} 
+                  cy={p.y} 
+                  r="4" 
+                  fill="#ffffff" 
+                  stroke="#0B6B5C" 
+                  strokeWidth="2" 
+                />
               ))}
             </svg>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '0.72rem', color: 'var(--md-on-surface-variant)', fontWeight: 600 }}>
+              {points.map((p, i) => (
+                <span key={i}>{p.day}</span>
+              ))}
+            </div>
           </div>
 
-          {/* Horizontal Category Bars */}
-          <div className="admin-chart-bars">
-            {Object.keys(service_counts).length === 0 ? (
-              <div style={{ color: 'var(--md-on-surface-variant)', fontSize: '0.9rem', padding: '1rem 0' }}>
-                No vertical data available yet.
-              </div>
-            ) : (
-              Object.entries(service_counts).map(([service, count]) => {
-                const pct = Math.round((count / maxServiceCount) * 100);
+          {/* Service breakdown bars */}
+          <div style={{ marginTop: '1.25rem' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--md-on-surface)', display: 'block', marginBottom: '0.75rem' }}>
+              Inflow by Service Category
+            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {Object.entries(service_counts).map(([service, count]) => {
                 const color = categoryColors[service] || defaultColor;
+                const pct = Math.round((count / maxServiceCount) * 100);
                 return (
                   <div 
-                    className="admin-bar-item" 
                     key={service} 
                     style={{ cursor: 'pointer' }}
-                    onClick={() => onFilterByService ? onFilterByService(service) : onNavigateToLeads()}
+                    onClick={() => onFilterByService && onFilterByService(service)}
                     title={`Filter by ${service}`}
                   >
-                    <div className="admin-bar-info">
-                      <span className="admin-bar-name">
-                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: color, display: 'inline-block' }} />
-                        {service}
-                      </span>
-                      <span style={{ fontWeight: 700, color: 'var(--md-on-surface)' }}>
-                        {count} leads ({total_leads > 0 ? Math.round((count / total_leads) * 100) : 0}%)
-                      </span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '3px' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--md-on-surface)' }}>{service}</span>
+                      <span style={{ color: 'var(--md-on-surface-variant)' }}>{count} leads</span>
                     </div>
-                    <div className="admin-bar-track">
-                      <div
-                        className="admin-bar-fill"
-                        style={{ width: `${pct}%`, backgroundColor: color }}
+                    <div style={{ height: '6px', borderRadius: '4px', background: 'var(--md-surface-container-high)', overflow: 'hidden' }}>
+                      <div 
+                        style={{ 
+                          height: '100%', 
+                          width: `${pct}%`, 
+                          background: color, 
+                          borderRadius: '4px',
+                          transition: 'width 0.4s ease'
+                        }} 
                       />
                     </div>
                   </div>
                 );
-              })
-            )}
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Right: Conversion Funnel & Pipeline */}
+        {/* Right: Lead Lifecycle Funnel */}
         <div className="admin-panel">
           <div className="admin-panel-header">
             <div>
               <h3 className="admin-panel-title">
-                <FiActivity style={{ color: '#10b981' }} />
-                Conversion Pipeline
+                <FiLayers style={{ color: 'var(--md-primary)' }} />
+                Intake Pipeline Funnel
               </h3>
               <span style={{ fontSize: '0.82rem', color: 'var(--md-on-surface-variant)' }}>
-                Lead progression from intake to closed
+                Progression from inquiry to qualified partner match
               </span>
             </div>
           </div>
 
-          <div className="admin-funnel-pipeline">
+          <div className="admin-funnel-list">
             <div className="admin-funnel-stage">
               <div className="admin-funnel-left">
                 <span className="admin-funnel-badge-dot" style={{ backgroundColor: '#0B6B5C' }} />
                 <div>
-                  <div className="admin-funnel-title">New Inquiries</div>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--md-on-surface-variant)' }}>Awaiting review</span>
+                  <div className="admin-funnel-title">New Inflow</div>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--md-on-surface-variant)' }}>Awaiting advisor outreach</span>
                 </div>
               </div>
               <span className="admin-funnel-count" style={{ color: '#0B6B5C' }}>{newCount}</span>
@@ -318,13 +444,13 @@ export default function AdminOverview({ stats, onNavigateToLeads, onFilterByServ
 
             <div className="admin-funnel-stage">
               <div className="admin-funnel-left">
-                <span className="admin-funnel-badge-dot" style={{ backgroundColor: '#d97706' }} />
+                <span className="admin-funnel-badge-dot" style={{ backgroundColor: '#f59e0b' }} />
                 <div>
                   <div className="admin-funnel-title">Contacted</div>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--md-on-surface-variant)' }}>In communication</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--md-on-surface-variant)' }}>Consultation in progress</span>
                 </div>
               </div>
-              <span className="admin-funnel-count" style={{ color: '#d97706' }}>{contactedCount}</span>
+              <span className="admin-funnel-count" style={{ color: '#f59e0b' }}>{contactedCount}</span>
             </div>
 
             <div className="admin-funnel-stage">

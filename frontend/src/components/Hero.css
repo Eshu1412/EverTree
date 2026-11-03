@@ -6,7 +6,7 @@
   position: relative;
   background: var(--gradient-hero-mesh);
   color: var(--fg);
-  padding-top: calc(var(--nav-height) + clamp(2rem, 5vw, 4rem));
+  padding-top: calc(var(--nav-height) + clamp(1.5rem, 3.5vw, 3rem));
   padding-bottom: 0;
   overflow: hidden;
 }
@@ -27,28 +27,28 @@
 .hero-content {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(2rem, 5vw, 4.5rem);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
   align-items: center;
   justify-content: space-between;
-  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
   position: relative;
   z-index: 1;
 }
 
 .hero-text {
-  flex: 1 1 500px;
-  max-width: 650px;
+  flex: 1 1 480px;
+  max-width: 620px;
 }
 
 .hero-badge-wrap {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 5px 12px;
   background: #EDF7F5;
   border: 1px solid rgba(11, 107, 92, 0.25);
   border-radius: var(--radius-full);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .hero-badge-dot {
@@ -67,7 +67,7 @@
 
 .hero-badge {
   font-family: var(--font);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.12em;
   color: #0B6B5C;
@@ -76,11 +76,11 @@
 }
 
 .hero-title {
-  margin: 0 0 1.25rem;
+  margin: 0 0 1rem;
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: clamp(2.5rem, 5.2vw, 3.75rem);
-  line-height: 1.08;
+  font-size: clamp(2.25rem, 4.5vw, 3.4rem);
+  line-height: 1.1;
   color: #03363A;
   letter-spacing: -0.035em;
 }
@@ -93,30 +93,30 @@
 }
 
 .hero-subtitle {
-  margin: 0 0 2rem;
+  margin: 0 0 1.5rem;
   font-family: var(--font);
-  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
-  line-height: 1.65;
-  max-width: 540px;
+  font-size: clamp(1rem, 1.35vw, 1.125rem);
+  line-height: 1.55;
+  max-width: 520px;
   color: #3F5655;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
   align-items: center;
 }
 
-/* ── Consultation Card (Executive Luxury Formulation) ─ */
+/* ── Consultation Card (Executive Luxury Formulation - Compact) ─ */
 .hero-consultation {
-  flex: 0 1 430px;
+  flex: 0 1 440px;
   width: 100%;
-  max-width: 430px;
+  max-width: 440px;
   background: #FFFFFF;
   border: 2px solid #03363A;
   border-radius: 16px;
-  padding: clamp(24px, 3.5vw, 34px);
+  padding: clamp(18px, 2.5vw, 24px);
   box-sizing: border-box;
   box-shadow: 0 20px 48px -12px rgba(3, 54, 58, 0.14),
               0 0 0 1px rgba(11, 107, 92, 0.12);
@@ -128,69 +128,135 @@
   content: '';
   position: absolute;
   top: 0;
-  left: 24px;
-  right: 24px;
+  left: 20px;
+  right: 20px;
   height: 3px;
   background: var(--gradient-gold);
   border-radius: 2px;
 }
 
 .consultation-title {
-  margin: 4px 0 6px;
+  margin: 0 0 3px;
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 24px;
+  font-size: 21px;
   color: #03363A;
   letter-spacing: -0.02em;
 }
 
 .consultation-desc {
-  margin: 0 0 18px;
+  margin: 0 0 10px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 13px;
   color: #3F5655;
-  line-height: 1.5;
+  line-height: 1.4;
+}
+
+/* Luxury Compact Role Switcher within Consultation Card */
+.consultation-role-switcher {
+  display: flex;
+  gap: 4px;
+  background: #EDF7F5;
+  padding: 3px;
+  border-radius: 9px;
+  margin-bottom: 11px;
+  border: 1px solid rgba(11, 107, 92, 0.2);
+}
+
+.consultation-role-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #3F5655;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.consultation-role-btn .role-icon {
+  font-size: 13px;
+  color: #0B6B5C;
+}
+
+.consultation-role-btn.active {
+  background: #03363A;
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(3, 54, 58, 0.18);
+}
+
+.consultation-role-btn.active .role-icon {
+  color: #E8B84A;
 }
 
 .consultation-form {
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 9px;
+}
+
+/* 2-Column Responsive Grid */
+.consultation-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .consultation-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   text-align: left;
 }
 
 .consultation-field label {
   font-family: var(--font);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #12302F;
 }
 
 .consultation-field input,
-.consultation-field select {
+.consultation-field select,
+.consultation-field textarea {
   width: 100%;
   box-sizing: border-box;
-  padding: 12px 14px;
+  padding: 9px 12px;
   border: 1.5px solid #8AA3A0;
-  border-radius: 8px;
+  border-radius: 7px;
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 13.5px;
   color: #12302F;
   background: #FFFFFF;
   transition: all 0.2s ease;
 }
 
+.consultation-field textarea {
+  min-height: 44px;
+  height: 44px;
+  padding: 6px 12px;
+  resize: vertical;
+}
+
+.consultation-field select {
+  cursor: pointer;
+  appearance: auto;
+}
+
 .consultation-field input:focus,
-.consultation-field select:focus {
+.consultation-field select:focus,
+.consultation-field textarea:focus {
   outline: none;
   border-color: #03363A;
-  box-shadow: 0 0 0 3px rgba(11, 107, 92, 0.15);
+  box-shadow: 0 0 0 2.5px rgba(11, 107, 92, 0.15);
 }
 
 .consultation-cta {
@@ -199,14 +265,14 @@
   color: #03363A;
   border: none;
   border-radius: 8px;
-  padding: 15px;
+  padding: 12px;
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 16px;
+  font-size: 15px;
   letter-spacing: 0.02em;
-  min-height: 48px;
+  min-height: 44px;
   cursor: pointer;
-  margin-top: 6px;
+  margin-top: 4px;
   box-shadow: var(--shadow-gold);
   transition: all 0.2s ease;
 }
@@ -220,43 +286,53 @@
 .hero-consultation small {
   display: block;
   font-family: var(--font);
-  font-size: 12px;
+  font-size: 11px;
   color: #5E7673;
   text-align: center;
-  margin-top: 4px;
+  margin-top: 3px;
+}
+
+.consultation-tcpa {
+  font-family: var(--font);
+  font-size: 10.5px;
+  color: #5E7673;
+  line-height: 1.38;
+  text-align: left;
+  margin: 3px 0 0;
 }
 
 .consultation-success {
   background: #EDF7F5;
   border: 1.5px solid #0B6B5C;
   border-radius: 10px;
-  padding: 20px;
+  padding: 18px;
   color: #03363A;
+  text-align: left;
 }
 
 .consultation-success strong {
   display: block;
   font-family: var(--font-heading);
-  font-size: 17px;
-  margin-bottom: 6px;
+  font-size: 16px;
+  margin-bottom: 5px;
   color: #0B6B5C;
 }
 
 .consultation-success p {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13.5px;
+  line-height: 1.45;
 }
 
 /* ── Benefits Row ────────────────────────────────────── */
 .hero-benefits {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(16px, 3vw, 36px);
-  padding: 22px 0;
+  gap: clamp(14px, 2.5vw, 32px);
+  padding: 18px 0;
   border-top: 1px solid #DDE7E3;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   color: #3F5655;
 }
@@ -268,21 +344,21 @@
 }
 
 .benefit-icon-badge {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #EDF7F5;
   color: #0B6B5C;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
 }
 
 /* ── Trusted By Enterprise Bar ───────────────────────── */
 .trusted-by-bar {
-  padding: 28px 0;
+  padding: 24px 0;
   border-bottom: 1px solid #DDE7E3;
   background: #FFFFFF;
 }
@@ -290,14 +366,14 @@
 .trusted-by-inner {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
+  gap: 20px;
   align-items: center;
   justify-content: space-between;
 }
 
 .trusted-by-label {
   font-family: var(--font);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.12em;
   color: #3F5655;
@@ -307,14 +383,14 @@
 .trusted-by-items {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(16px, 2.5vw, 32px);
+  gap: clamp(14px, 2vw, 28px);
   align-items: center;
 }
 
 .trusted-by-item {
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14.5px;
   color: #5E7673;
   display: inline-flex;
   align-items: center;
@@ -323,32 +399,67 @@
 
 .trusted-by-rating {
   color: #E8B84A;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
 .trusted-by-highlight {
   color: #03363A;
   font-weight: 800;
   background: #EDF5F3;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
 }
 
 @media (max-width: 900px) {
   .hero-content {
     flex-direction: column;
-    gap: 36px;
+    gap: 28px;
   }
   .hero-consultation {
     max-width: 100%;
   }
+  .consultation-row-2col {
+    grid-template-columns: 1fr;
+  }
   .hero-benefits {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   .trusted-by-inner {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 12px;
   }
+}
+
+/* Error banner inside consultation form */
+.consultation-error-banner {
+  background: #FEF2F2;
+  border: 1px solid #F87171;
+  color: #991B1B;
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-family: var(--font);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* Legal modal trigger links in consultation TCPA disclaimer */
+.consultation-legal-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: #0B6B5C;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline;
+}
+
+.consultation-legal-link:hover {
+  color: #03363A;
 }

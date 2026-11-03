@@ -56,7 +56,7 @@ export default function Navbar({
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="navbar-inner">
-        <a className="navbar-logo" href="#" onClick={(e) => { e.preventDefault(); handleLinkClick(onNavigateHome) }}>
+        <a className="navbar-logo" href="/" onClick={(e) => { e.preventDefault(); handleLinkClick(onNavigateHome) }}>
           <span className="navbar-logo-frame">
             <img className="navbar-logo-image" src="/evertree-symbol.svg" alt="EverTree Solutions" />
           </span>

@@ -3,12 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiPieChart, FiUsers, FiShield, FiLogOut, FiRefreshCw, 
   FiHome, FiGrid, FiSun, FiMoon, FiSettings, 
-  FiChevronLeft, FiChevronRight, FiMaximize2, FiBell 
+  FiChevronLeft, FiChevronRight, FiMaximize2, FiBell,
+  FiShoppingBag, FiRadio
 } from 'react-icons/fi';
 
 import AdminLogin from './AdminLogin';
 import AdminOverview from './AdminOverview';
 import AdminLeads from './AdminLeads';
+import AdminBuyers from './AdminBuyers';
+import AdminPublishers from './AdminPublishers';
 import AdminStaff from './AdminStaff';
 import AdminSettings from './AdminSettings';
 import AdminSnackbar from './AdminSnackbar';
@@ -17,7 +20,8 @@ import './AdminDashboard.css';
 
 export default function AdminDashboard({ onNavigateHome }) {
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'leads' | 'staff' | 'settings'
+  // 'overview' | 'leads' | 'buyers' | 'publishers' | 'staff' | 'settings'
+  const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -183,6 +187,38 @@ export default function AdminDashboard({ onNavigateHome }) {
             )}
           </button>
 
+          {!sidebarCollapsed && <span className="admin-nav-section-label" style={{ marginTop: '0.6rem' }}>Marketplace</span>}
+
+          <button
+            className={`admin-nav-item ${activeTab === 'buyers' ? 'active' : ''}`}
+            onClick={() => setActiveTab('buyers')}
+            title="Buyers Hub"
+          >
+            <FiShoppingBag className="admin-nav-icon" style={{ color: activeTab === 'buyers' ? 'var(--md-primary)' : 'inherit' }} />
+            {!sidebarCollapsed && (
+              <>
+                <span>Buyers Hub</span>
+                {stats?.total_buyers ? <span className="admin-nav-badge" style={{ background: '#3b82f6' }}>{stats.total_buyers}</span> : null}
+              </>
+            )}
+          </button>
+
+          <button
+            className={`admin-nav-item ${activeTab === 'publishers' ? 'active' : ''}`}
+            onClick={() => setActiveTab('publishers')}
+            title="Publishers Hub"
+          >
+            <FiRadio className="admin-nav-icon" style={{ color: activeTab === 'publishers' ? '#00875a' : 'inherit' }} />
+            {!sidebarCollapsed && (
+              <>
+                <span>Publishers Hub</span>
+                {stats?.total_publishers ? <span className="admin-nav-badge" style={{ background: '#00875a' }}>{stats.total_publishers}</span> : null}
+              </>
+            )}
+          </button>
+
+          {!sidebarCollapsed && <span className="admin-nav-section-label" style={{ marginTop: '0.6rem' }}>Administration</span>}
+
           <button
             className={`admin-nav-item ${activeTab === 'staff' ? 'active' : ''}`}
             onClick={() => setActiveTab('staff')}
@@ -238,6 +274,8 @@ export default function AdminDashboard({ onNavigateHome }) {
             <h1>
               {activeTab === 'overview' && 'Analytics & Operations Hub'}
               {activeTab === 'leads' && 'Consumer Quote Directory & Kanban'}
+              {activeTab === 'buyers' && 'Advertiser & Buyer Marketplace Requests'}
+              {activeTab === 'publishers' && 'Publisher & Traffic Partner Applications'}
               {activeTab === 'staff' && 'Team Access & Permissions'}
               {activeTab === 'settings' && 'Platform Diagnostics & Controls'}
             </h1>
@@ -292,6 +330,8 @@ export default function AdminDashboard({ onNavigateHome }) {
                 key="overview"
                 stats={stats}
                 onNavigateToLeads={() => { setActiveTab('leads'); setServiceFilterTarget('all'); }}
+                onNavigateToBuyers={() => setActiveTab('buyers')}
+                onNavigateToPublishers={() => setActiveTab('publishers')}
                 onFilterByService={handleFilterByService}
               />
             )}
@@ -300,6 +340,22 @@ export default function AdminDashboard({ onNavigateHome }) {
               <AdminLeads
                 key={`leads-${serviceFilterTarget}`}
                 initialServiceFilter={serviceFilterTarget}
+                onUpdateRefresh={fetchStats}
+                onShowSnackbar={showSnackbar}
+              />
+            )}
+
+            {activeTab === 'buyers' && (
+              <AdminBuyers
+                key="buyers"
+                onUpdateRefresh={fetchStats}
+                onShowSnackbar={showSnackbar}
+              />
+            )}
+
+            {activeTab === 'publishers' && (
+              <AdminPublishers
+                key="publishers"
                 onUpdateRefresh={fetchStats}
                 onShowSnackbar={showSnackbar}
               />

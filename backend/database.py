@@ -232,10 +232,38 @@ def init_db():
             updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
     """
+    create_buyers_sql = """
+        CREATE TABLE IF NOT EXISTS buyers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            full_name TEXT NOT NULL,
+            company TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            vertical TEXT NOT NULL,
+            message TEXT DEFAULT '',
+            status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'active', 'suspended', 'rejected')),
+            notes TEXT DEFAULT '',
+            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+    """
+    create_publishers_sql = """
+        CREATE TABLE IF NOT EXISTS publishers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            full_name TEXT NOT NULL,
+            company TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            vertical TEXT NOT NULL,
+            message TEXT DEFAULT '',
+            status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'active', 'suspended', 'rejected')),
+            notes TEXT DEFAULT '',
+            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+    """
 
     if USE_TURSO:
         try:
-            batch_query_turso([create_users_sql, create_leads_sql, create_flight_bookings_sql, create_settings_sql])
+            batch_query_turso([create_users_sql, create_leads_sql, create_flight_bookings_sql, create_settings_sql, create_buyers_sql, create_publishers_sql])
             print(f"[DB] Turso Database connected & initialized: {TURSO_DB_URL}")
             
             # Ensure columns exist on Turso if table already existed
@@ -283,6 +311,8 @@ def init_db():
     cursor.execute(create_leads_sql)
     cursor.execute(create_flight_bookings_sql)
     cursor.execute(create_settings_sql)
+    cursor.execute(create_buyers_sql)
+    cursor.execute(create_publishers_sql)
     # Ensure columns exist on local SQLite if table was created previously
     for col in ["departure", "destination", "address", "state", "zip_code", "trusted_form_cert_url", "trusted_form_retained", "trusted_form_cert_id"]:
         try:
@@ -484,7 +514,9 @@ def get_dashboard_stats():
                 {"sql": "SELECT COUNT(*) as count FROM leads WHERE trusted_form_retained = 1"},
                 {"sql": "SELECT COUNT(*) as count FROM leads WHERE trusted_form_cert_url != ''"},
                 {"sql": "SELECT date(created_at) as day, COUNT(*) as count FROM leads WHERE created_at >= date('now', '-6 days') GROUP BY date(created_at) ORDER BY day ASC"},
-                {"sql": "SELECT * FROM leads ORDER BY created_at DESC LIMIT 5"}
+                {"sql": "SELECT * FROM leads ORDER BY created_at DESC LIMIT 5"},
+                {"sql": "SELECT COUNT(*) as count FROM buyers"},
+                {"sql": "SELECT COUNT(*) as count FROM publishers"}
             ])
 
             total_leads = results[0][0].get("count", 0) if results[0] else 0
@@ -504,10 +536,15 @@ def get_dashboard_stats():
             daily_trends = [{"day": r["day"], "count": r.get("count", 0)} for r in results[7]]
             recent_leads = results[8]
 
+            total_buyers = results[9][0].get("count", 0) if len(results) > 9 and results[9] else 0
+            total_publishers = results[10][0].get("count", 0) if len(results) > 10 and results[10] else 0
+
             return {
                 "total_leads": total_leads,
                 "new_today": new_today,
                 "new_this_week": new_this_week,
+                "total_buyers": total_buyers,
+                "total_publishers": total_publishers,
                 "status_counts": status_counts,
                 "service_counts": service_counts,
                 "daily_trends": daily_trends,
@@ -561,12 +598,27 @@ def get_dashboard_stats():
 
     cursor.execute("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5")
     recent_leads = [dict(r) for r in cursor.fetchall()]
+
+    try:
+        cursor.execute("SELECT COUNT(*) FROM buyers")
+        total_buyers = cursor.fetchone()[0]
+    except Exception:
+        total_buyers = 0
+
+    try:
+        cursor.execute("SELECT COUNT(*) FROM publishers")
+        total_publishers = cursor.fetchone()[0]
+    except Exception:
+        total_publishers = 0
+
     conn.close()
 
     return {
         "total_leads": total_leads,
         "new_today": new_today,
         "new_this_week": new_this_week,
+        "total_buyers": total_buyers,
+        "total_publishers": total_publishers,
         "status_counts": status_counts,
         "service_counts": service_counts,
         "daily_trends": daily_trends,
@@ -889,6 +941,478 @@ def delete_flight_booking(booking_id: int):
     deleted = cursor.rowcount > 0
     conn.close()
     return deleted
+
+
+# ── Buyer CRUD ─────────────────────────────────────────
+
+def create_buyer(data: dict) -> int:
+    sql = """
+        INSERT INTO buyers (
+            full_name, company, email, phone, vertical, message, status, notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    params = [
+        data["full_name"].strip(),
+        data.get("company", "").strip(),
+        data["email"].strip(),
+        data["phone"].strip(),
+        data.get("vertical", "Other").strip(),
+        data.get("message", "").strip(),
+        data.get("status", "pending"),
+        data.get("notes", "")
+    ]
+
+    if USE_TURSO:
+        try:
+            _, _, last_id = query_turso(sql, params)
+            return last_id or 1
+        except Exception as e:
+            print(f"[DB] Turso create_buyer fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    buyer_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return buyer_id
+
+
+def get_buyers(
+    search: str = "",
+    status: str = "",
+    vertical: str = "",
+    page: int = 1,
+    per_page: int = 20,
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    conditions = []
+    params = []
+
+    if search:
+        conditions.append(
+            "(full_name LIKE ? OR company LIKE ? OR email LIKE ? OR phone LIKE ? OR message LIKE ?)"
+        )
+        s = f"%{search}%"
+        params.extend([s, s, s, s, s])
+
+    if status and status != "all":
+        conditions.append("status = ?")
+        params.append(status)
+
+    if vertical and vertical != "all":
+        conditions.append("vertical = ?")
+        params.append(vertical)
+
+    where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+
+    valid_sort_cols = {
+        "created_at": "created_at",
+        "full_name": "full_name",
+        "company": "company",
+        "vertical": "vertical",
+        "status": "status",
+        "email": "email"
+    }
+    order_col = valid_sort_cols.get(sort_by, "created_at")
+    order_dir = "ASC" if sort_order.lower() == "asc" else "DESC"
+    is_unlimited = (per_page is None or per_page <= 0 or per_page >= 50000)
+
+    if USE_TURSO:
+        try:
+            if is_unlimited:
+                results = batch_query_turso([
+                    {"sql": f"SELECT COUNT(*) as count FROM buyers {where}", "params": params},
+                    {"sql": f"SELECT * FROM buyers {where} ORDER BY {order_col} {order_dir}", "params": params}
+                ])
+            else:
+                offset = (page - 1) * per_page
+                results = batch_query_turso([
+                    {"sql": f"SELECT COUNT(*) as count FROM buyers {where}", "params": params},
+                    {"sql": f"SELECT * FROM buyers {where} ORDER BY {order_col} {order_dir} LIMIT ? OFFSET ?", "params": params + [per_page, offset]}
+                ])
+            count_rows = results[0]
+            rows = results[1]
+            total = count_rows[0].get("count", 0) if count_rows else 0
+            return {
+                "buyers": rows,
+                "total": total,
+                "page": 1 if is_unlimited else page,
+                "per_page": total if is_unlimited else per_page,
+                "total_pages": 1 if is_unlimited or total == 0 else max(1, (total + per_page - 1) // per_page),
+            }
+        except Exception as e:
+            print(f"[DB] Turso get_buyers fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT COUNT(*) FROM buyers {where}", params)
+    total = cursor.fetchone()[0]
+
+    if is_unlimited:
+        cursor.execute(f"SELECT * FROM buyers {where} ORDER BY {order_col} {order_dir}", params)
+    else:
+        offset = (page - 1) * per_page
+        cursor.execute(
+            f"SELECT * FROM buyers {where} ORDER BY {order_col} {order_dir} LIMIT ? OFFSET ?",
+            params + [per_page, offset],
+        )
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+
+    return {
+        "buyers": rows,
+        "total": total,
+        "page": 1 if is_unlimited else page,
+        "per_page": total if is_unlimited else per_page,
+        "total_pages": 1 if is_unlimited or total == 0 else max(1, (total + per_page - 1) // per_page),
+    }
+
+
+def get_buyer_by_id(buyer_id: int):
+    if USE_TURSO:
+        try:
+            rows, _, _ = query_turso("SELECT * FROM buyers WHERE id = ?", [buyer_id])
+            return rows[0] if rows else None
+        except Exception as e:
+            print(f"[DB] Turso get_buyer_by_id fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM buyers WHERE id = ?", (buyer_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_buyer(buyer_id: int, data: dict):
+    fields = []
+    params = []
+    allowed = ["full_name", "company", "email", "phone", "vertical", "message", "status", "notes"]
+    for key in allowed:
+        if key in data and data[key] is not None:
+            fields.append(f"{key} = ?")
+            params.append(data[key])
+
+    if not fields:
+        return False
+
+    params.append(buyer_id)
+    sql = f"UPDATE buyers SET {', '.join(fields)} WHERE id = ?"
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, params)
+            return affected > 0
+        except Exception as e:
+            print(f"[DB] Turso update_buyer fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    conn.commit()
+    updated = cursor.rowcount > 0
+    conn.close()
+    return updated
+
+
+def delete_buyer(buyer_id: int):
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso("DELETE FROM buyers WHERE id = ?", [buyer_id])
+            return affected > 0
+        except Exception as e:
+            print(f"[DB] Turso delete_buyer fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM buyers WHERE id = ?", (buyer_id,))
+    conn.commit()
+    deleted = cursor.rowcount > 0
+    conn.close()
+    return deleted
+
+
+def bulk_update_buyer_status(buyer_ids: list, status: str):
+    if not buyer_ids or not status:
+        return 0
+    placeholders = ",".join("?" for _ in buyer_ids)
+    sql = f"UPDATE buyers SET status = ? WHERE id IN ({placeholders})"
+    params = [status] + buyer_ids
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, params)
+            return affected
+        except Exception as e:
+            print(f"[DB] Turso bulk_update_buyer_status fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    conn.commit()
+    count = cursor.rowcount
+    conn.close()
+    return count
+
+
+def bulk_delete_buyers(buyer_ids: list):
+    if not buyer_ids:
+        return 0
+    placeholders = ",".join("?" for _ in buyer_ids)
+    sql = f"DELETE FROM buyers WHERE id IN ({placeholders})"
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, buyer_ids)
+            return affected
+        except Exception as e:
+            print(f"[DB] Turso bulk_delete_buyers fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, buyer_ids)
+    conn.commit()
+    count = cursor.rowcount
+    conn.close()
+    return count
+
+
+# ── Publisher CRUD ─────────────────────────────────────
+
+def create_publisher(data: dict) -> int:
+    sql = """
+        INSERT INTO publishers (
+            full_name, company, email, phone, vertical, message, status, notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    params = [
+        data["full_name"].strip(),
+        data.get("company", "").strip(),
+        data["email"].strip(),
+        data["phone"].strip(),
+        data.get("vertical", "Other").strip(),
+        data.get("message", "").strip(),
+        data.get("status", "pending"),
+        data.get("notes", "")
+    ]
+
+    if USE_TURSO:
+        try:
+            _, _, last_id = query_turso(sql, params)
+            return last_id or 1
+        except Exception as e:
+            print(f"[DB] Turso create_publisher fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    pub_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return pub_id
+
+
+def get_publishers(
+    search: str = "",
+    status: str = "",
+    vertical: str = "",
+    page: int = 1,
+    per_page: int = 20,
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    conditions = []
+    params = []
+
+    if search:
+        conditions.append(
+            "(full_name LIKE ? OR company LIKE ? OR email LIKE ? OR phone LIKE ? OR message LIKE ?)"
+        )
+        s = f"%{search}%"
+        params.extend([s, s, s, s, s])
+
+    if status and status != "all":
+        conditions.append("status = ?")
+        params.append(status)
+
+    if vertical and vertical != "all":
+        conditions.append("vertical = ?")
+        params.append(vertical)
+
+    where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+
+    valid_sort_cols = {
+        "created_at": "created_at",
+        "full_name": "full_name",
+        "company": "company",
+        "vertical": "vertical",
+        "status": "status",
+        "email": "email"
+    }
+    order_col = valid_sort_cols.get(sort_by, "created_at")
+    order_dir = "ASC" if sort_order.lower() == "asc" else "DESC"
+    is_unlimited = (per_page is None or per_page <= 0 or per_page >= 50000)
+
+    if USE_TURSO:
+        try:
+            if is_unlimited:
+                results = batch_query_turso([
+                    {"sql": f"SELECT COUNT(*) as count FROM publishers {where}", "params": params},
+                    {"sql": f"SELECT * FROM publishers {where} ORDER BY {order_col} {order_dir}", "params": params}
+                ])
+            else:
+                offset = (page - 1) * per_page
+                results = batch_query_turso([
+                    {"sql": f"SELECT COUNT(*) as count FROM publishers {where}", "params": params},
+                    {"sql": f"SELECT * FROM publishers {where} ORDER BY {order_col} {order_dir} LIMIT ? OFFSET ?", "params": params + [per_page, offset]}
+                ])
+            count_rows = results[0]
+            rows = results[1]
+            total = count_rows[0].get("count", 0) if count_rows else 0
+            return {
+                "publishers": rows,
+                "total": total,
+                "page": 1 if is_unlimited else page,
+                "per_page": total if is_unlimited else per_page,
+                "total_pages": 1 if is_unlimited or total == 0 else max(1, (total + per_page - 1) // per_page),
+            }
+        except Exception as e:
+            print(f"[DB] Turso get_publishers fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT COUNT(*) FROM publishers {where}", params)
+    total = cursor.fetchone()[0]
+
+    if is_unlimited:
+        cursor.execute(f"SELECT * FROM publishers {where} ORDER BY {order_col} {order_dir}", params)
+    else:
+        offset = (page - 1) * per_page
+        cursor.execute(
+            f"SELECT * FROM publishers {where} ORDER BY {order_col} {order_dir} LIMIT ? OFFSET ?",
+            params + [per_page, offset],
+        )
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+
+    return {
+        "publishers": rows,
+        "total": total,
+        "page": 1 if is_unlimited else page,
+        "per_page": total if is_unlimited else per_page,
+        "total_pages": 1 if is_unlimited or total == 0 else max(1, (total + per_page - 1) // per_page),
+    }
+
+
+def get_publisher_by_id(pub_id: int):
+    if USE_TURSO:
+        try:
+            rows, _, _ = query_turso("SELECT * FROM publishers WHERE id = ?", [pub_id])
+            return rows[0] if rows else None
+        except Exception as e:
+            print(f"[DB] Turso get_publisher_by_id fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM publishers WHERE id = ?", (pub_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_publisher(pub_id: int, data: dict):
+    fields = []
+    params = []
+    allowed = ["full_name", "company", "email", "phone", "vertical", "message", "status", "notes"]
+    for key in allowed:
+        if key in data and data[key] is not None:
+            fields.append(f"{key} = ?")
+            params.append(data[key])
+
+    if not fields:
+        return False
+
+    params.append(pub_id)
+    sql = f"UPDATE publishers SET {', '.join(fields)} WHERE id = ?"
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, params)
+            return affected > 0
+        except Exception as e:
+            print(f"[DB] Turso update_publisher fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    conn.commit()
+    updated = cursor.rowcount > 0
+    conn.close()
+    return updated
+
+
+def delete_publisher(pub_id: int):
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso("DELETE FROM publishers WHERE id = ?", [pub_id])
+            return affected > 0
+        except Exception as e:
+            print(f"[DB] Turso delete_publisher fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM publishers WHERE id = ?", (pub_id,))
+    conn.commit()
+    deleted = cursor.rowcount > 0
+    conn.close()
+    return deleted
+
+
+def bulk_update_publisher_status(pub_ids: list, status: str):
+    if not pub_ids or not status:
+        return 0
+    placeholders = ",".join("?" for _ in pub_ids)
+    sql = f"UPDATE publishers SET status = ? WHERE id IN ({placeholders})"
+    params = [status] + pub_ids
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, params)
+            return affected
+        except Exception as e:
+            print(f"[DB] Turso bulk_update_publisher_status fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    conn.commit()
+    count = cursor.rowcount
+    conn.close()
+    return count
+
+
+def bulk_delete_publishers(pub_ids: list):
+    if not pub_ids:
+        return 0
+    placeholders = ",".join("?" for _ in pub_ids)
+    sql = f"DELETE FROM publishers WHERE id IN ({placeholders})"
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, pub_ids)
+            return affected
+        except Exception as e:
+            print(f"[DB] Turso bulk_delete_publishers fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, pub_ids)
+    conn.commit()
+    count = cursor.rowcount
+    conn.close()
+    return count
 
 
 # ── User Management ───────────────────────────────────
