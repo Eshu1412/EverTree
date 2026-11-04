@@ -181,8 +181,8 @@ export default function QuoteForm({
   onNavigateVertical,
   onFormSubmitted
 }) {
-  const [step, setStep] = useState(1) // 1 = Service & Needs, 2 = Contact & TCPA, 3 = Confirmation
-  const [selectedServiceId, setSelectedServiceId] = useState('health')
+  const [step, setStep] = useState(1) // 1 = Service, 2 = Contact, 3 = Confirmation
+  const [selectedServiceId, setSelectedServiceId] = useState('')
   const [answers, setAnswers] = useState({})
   
   const [formData, setFormData] = useState({
@@ -209,13 +209,29 @@ export default function QuoteForm({
         )
         if (found) {
           setSelectedServiceId(found.id)
+          // A visitor who has already chosen a service should not have to
+          // repeat that choice inside the quote form.
+          setStep(2)
+        } else {
+          setSelectedServiceId('')
+          setStep(1)
         }
+      } else {
+        setSelectedServiceId('')
+        setStep(1)
       }
       setErrorMsg('')
     }
   }, [defaultService, isOpen])
 
-  const activeService = SERVICES_CONFIG.find(s => s.id === selectedServiceId) || SERVICES_CONFIG[0]
+  const activeService = SERVICES_CONFIG.find(s => s.id === selectedServiceId)
+
+  const chooseService = (serviceId) => {
+    setSelectedServiceId(serviceId)
+    setAnswers({})
+    setErrorMsg('')
+    setStep(2)
+  }
 
   // Update question answers
   const handleAnswerChange = (questionId, value) => {
@@ -227,15 +243,11 @@ export default function QuoteForm({
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  // Step 1 -> Step 2
-  const handleProceedToContact = () => {
-    setErrorMsg('')
-    setStep(2)
-  }
-
   // Step 2 -> Step 1
   const handleBackToService = () => {
     setErrorMsg('')
+    setSelectedServiceId('')
+    setAnswers({})
     setStep(1)
   }
 
@@ -243,6 +255,12 @@ export default function QuoteForm({
   const handleSubmit = async (e) => {
     e.preventDefault()
     setErrorMsg('')
+
+    if (!activeService) {
+      setErrorMsg('Choose a service to continue.')
+      setStep(1)
+      return
+    }
 
     if (!formData.full_name.trim()) {
       setErrorMsg('Please enter your full name.')
@@ -293,6 +311,11 @@ export default function QuoteForm({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.detail || 'Unable to submit the quote request.')
+      }
 
       const resultObj = {
         refId: data.lead_id ? `REQ-${data.lead_id}` : `REQ-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -368,6 +391,7 @@ export default function QuoteForm({
       setFormData({ full_name: '', email: '', phone: '', zip_code: '', preferred_time: 'Anytime' })
       setAnswers({})
       setTcpaConsent(true)
+      setSelectedServiceId('')
     }, 300)
   }
 
@@ -406,13 +430,15 @@ export default function QuoteForm({
               <div className="quote-wizard-brand">
                 <div className="quote-brand-identity">
                   <span className="quote-logo-frame">
-                    <img src="/evertree-symbol.svg" alt="EverTree" className="quote-logo-img" />
+                    <svg className="quote-brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 3 22 21H2L12 3Z" />
+                    </svg>
                   </span>
-                  <span className="quote-brand-text">EverTree <em>Solutions</em></span>
+                  <span className="quote-brand-text">EverTree</span>
                 </div>
                 <div className="quote-wizard-brand-right">
                   <span className="quote-brand-badge">
-                    <FaCheckCircle style={{ color: '#10B981' }} /> Free Quote Matcher
+                    <FaCheckCircle /> Free Quote Matcher
                   </span>
                   <span className="quote-step-count">
                     {step === 3 ? 'Completed' : `Step ${step} of 2`}
@@ -449,8 +475,8 @@ export default function QuoteForm({
                 transition={{ duration: 0.2 }}
               >
                 <div className="quote-step-intro">
-                  <h2>What service do you need a <span className="accent">quote</span> for?</h2>
-                  <p>Select your category below to compare verified rates from top providers in your area.</p>
+                  <h2>What can we help you <span className="accent">with?</span></h2>
+                  <p>Choose one service. We’ll only ask for the essentials next.</p>
                 </div>
 
                 {/* Service Cards Grid */}
@@ -463,12 +489,9 @@ export default function QuoteForm({
                         key={srv.id}
                         type="button"
                         className={`quote-service-card ${isSelected ? 'active' : ''}`}
-                        onClick={() => setSelectedServiceId(srv.id)}
+                        onClick={() => chooseService(srv.id)}
                       >
-                        <div 
-                          className="quote-service-icon-wrap" 
-                          style={{ color: srv.color, backgroundColor: `${srv.color}15` }}
-                        >
+                        <div className="quote-service-icon-wrap">
                           <SrvIcon />
                         </div>
                         <div className="quote-service-meta">
@@ -478,56 +501,18 @@ export default function QuoteForm({
                           </div>
                           <p className="quote-service-sub">{srv.desc}</p>
                         </div>
-                        <div className="quote-service-check-indicator">
-                          {isSelected && <FaCheck />}
+                        <div className={`quote-service-action ${isSelected ? 'is-selected' : ''}`}>
+                          {isSelected ? <FaCheck /> : <><span>Choose</span><FaArrowRight /></>}
                         </div>
                       </button>
                     )
                   })}
                 </div>
 
-                {/* Dynamic Qualification Questions for Selected Service */}
-                {activeService.questions && activeService.questions.length > 0 && (
-                  <div className="quote-questions-container">
-                    <div className="quote-questions-title">
-                      Customize Your <strong>{activeService.title}</strong> Request:
-                    </div>
-                    <div className="quote-questions-grid">
-                      {activeService.questions.map((q) => (
-                        <div key={q.id} className="form-group">
-                          <label className="form-label" htmlFor={`q-${q.id}`}>
-                            {q.label}
-                          </label>
-                          <select
-                            id={`q-${q.id}`}
-                            className="form-select"
-                            value={answers[q.id] || q.options[0]}
-                            onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                          >
-                            {q.options.map((opt, oIdx) => (
-                              <option key={oIdx} value={opt}>{opt}</option>
-                            ))}
-                          </select>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Next Step Action */}
-                <button
-                  type="button"
-                  className="btn btn-primary quote-next-btn"
-                  onClick={handleProceedToContact}
-                >
-                  <span>Continue to Rates &amp; Details</span>
-                  <FaArrowRight />
-                </button>
-
                 <div className="quote-trust-strip">
-                  <span><FaLock style={{ color: '#10B981' }} /> 256-Bit SSL Encrypted</span>
-                  <span><FaCheckCircle style={{ color: '#0B6B5C' }} /> 100% Free Service</span>
-                  <span><FaShieldAlt style={{ color: '#8B5CF6' }} /> Zero Obligation</span>
+                  <span><FaLock /> 256-Bit SSL Encrypted</span>
+                  <span><FaCheckCircle /> 100% Free Service</span>
+                  <span><FaShieldAlt /> Zero Obligation</span>
                 </div>
               </motion.div>
             )}
@@ -551,8 +536,8 @@ export default function QuoteForm({
                       Change
                     </button>
                   </div>
-                  <h2>Where should we send your <span className="accent">free quotes</span>?</h2>
-                  <p>Provide your contact details so our matched specialists can deliver your competitive estimates.</p>
+                  <h2>Get your <span className="accent">free quotes</span></h2>
+                  <p>Share your details and a local specialist will follow up with options for you.</p>
                 </div>
 
                 <form className="quote-form" onSubmit={handleSubmit}>
@@ -649,6 +634,29 @@ export default function QuoteForm({
                     </div>
                   </div>
 
+                  {activeService.questions?.length > 0 && (
+                    <details className="quote-personalize-details">
+                      <summary>Help us tailor your {activeService.title} quote <span>Optional</span></summary>
+                      <p>These answers can help us make the first conversation more relevant. You can skip them.</p>
+                      <div className="quote-questions-grid">
+                        {activeService.questions.map((q) => (
+                          <div key={q.id} className="form-group">
+                            <label className="form-label" htmlFor={`q-${q.id}`}>{q.label}</label>
+                            <select
+                              id={`q-${q.id}`}
+                              className="form-select"
+                              value={answers[q.id] || ''}
+                              onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                            >
+                              <option value="">No preference</option>
+                              {q.options.map((opt, oIdx) => <option key={oIdx} value={opt}>{opt}</option>)}
+                            </select>
+                          </div>
+                        ))}
+                      </div>
+                    </details>
+                  )}
+
                   {/* TCPA Compliance Section with ActiveProspect TrustedForm Certification */}
                   <div className="quote-tcpa-box">
                     <label className="quote-tcpa-label" htmlFor="quote-tcpa-consent">
@@ -667,7 +675,7 @@ export default function QuoteForm({
 
                     <div className="quote-tcpa-badges">
                       <span className="quote-tf-pill" title="ActiveProspect TrustedForm TCPA Certification Active">
-                        <FaShieldAlt style={{ color: '#10B981' }} /> ActiveProspect TrustedForm&reg; Certified
+                        <FaShieldAlt /> ActiveProspect TrustedForm&reg; Certified
                       </span>
                       <span className="quote-ssl-pill">
                         <FaLock /> 256-Bit Encrypted
@@ -734,7 +742,7 @@ export default function QuoteForm({
                   <div className="quote-confirmed-grid">
                     <div className="confirmed-item">
                       <span className="confirmed-label">Selected Service</span>
-                      <span className="confirmed-val" style={{ color: 'var(--primary)' }}>
+                      <span className="confirmed-val confirmed-val--service">
                         {leadResult.serviceTitle}
                       </span>
                     </div>
@@ -756,14 +764,14 @@ export default function QuoteForm({
                     </div>
                     <div className="confirmed-item">
                       <span className="confirmed-label">Compliance Status</span>
-                      <span className="confirmed-val" style={{ color: '#10B981', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span className="confirmed-val confirmed-val--tcpa">
                         <FaShieldAlt /> TCPA Certified
                       </span>
                     </div>
                   </div>
 
                   <div className="quote-provider-alert">
-                    <FaCheckCircle style={{ color: '#10B981', flexShrink: 0, fontSize: '1.1rem' }} />
+                    <FaCheckCircle className="quote-provider-alert-icon" />
                     <span>
                       Local pre-screened professionals in your area have been notified and will contact you via phone or email within minutes.
                     </span>

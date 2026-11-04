@@ -96,9 +96,11 @@ export default function ContactRedirectModal({
           <div className="crm-header">
             <div className="crm-brand-top">
               <span className="crm-logo-frame">
-                <img src="/evertree-symbol.svg" alt="EverTree" className="crm-logo-img" />
+                <svg className="brand-mark" viewBox="0 0 24 24" aria-hidden="true" style={{ width: '16px', height: '16px', fill: 'currentColor' }}>
+                  <path d="M12 3 22 21H2L12 3Z" />
+                </svg>
               </span>
-              <span className="crm-brand-name">EverTree <em>Solutions</em></span>
+              <span className="crm-brand-name">EverTree</span>
             </div>
             <div className="crm-status-pill">
               <span className="crm-pulse-dot"></span>

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiPieChart, FiUsers, FiShield, FiLogOut, FiRefreshCw, 
   FiHome, FiGrid, FiSun, FiMoon, FiSettings, 
-  FiChevronLeft, FiChevronRight, FiMaximize2, FiBell,
+  FiChevronLeft, FiChevronRight, FiMaximize2, FiBell, FiMenu, FiX,
   FiShoppingBag, FiRadio
 } from 'react-icons/fi';
 
@@ -25,6 +25,7 @@ export default function AdminDashboard({ onNavigateHome }) {
   const [stats, setStats] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [serviceFilterTarget, setServiceFilterTarget] = useState('all');
 
   // Theme state
@@ -34,6 +35,16 @@ export default function AdminDashboard({ onNavigateHome }) {
 
   // Snackbars state
   const [snackbars, setSnackbars] = useState([]);
+
+  const workspaceMeta = {
+    overview: { eyebrow: 'Executive workspace', title: 'Analytics & Operations Hub' },
+    leads: { eyebrow: 'Revenue operations', title: 'Consumer Quote Directory & Kanban' },
+    buyers: { eyebrow: 'Marketplace demand', title: 'Advertiser & Buyer Marketplace Requests' },
+    publishers: { eyebrow: 'Marketplace supply', title: 'Publisher & Traffic Partner Applications' },
+    staff: { eyebrow: 'Access management', title: 'Team Access & Permissions' },
+    settings: { eyebrow: 'Platform administration', title: 'Platform Diagnostics & Controls' },
+  };
+  const activeWorkspace = workspaceMeta[activeTab];
 
   const showSnackbar = (message, type = 'success') => {
     const id = Date.now() + Math.random();
@@ -136,11 +147,13 @@ export default function AdminDashboard({ onNavigateHome }) {
       <AdminSnackbar snackbars={snackbars} onClose={removeSnackbar} />
 
       {/* Collapsible Sidebar */}
-      <aside className={`admin-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+      <aside className={`admin-sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
           <div className="admin-brand-group">
             <div className="admin-logo-sq">
-              <img src="/evertree-symbol.svg" alt="EverTree Solutions" />
+              <svg viewBox="0 0 24 24" aria-hidden="true" style={{ width: '20px', height: '20px', fill: 'currentColor' }}>
+                <path d="M12 3 22 21H2L12 3Z" />
+              </svg>
             </div>
             {!sidebarCollapsed && (
               <div className="admin-brand-info">
@@ -159,6 +172,13 @@ export default function AdminDashboard({ onNavigateHome }) {
           >
             {sidebarCollapsed ? <FiChevronRight /> : <FiChevronLeft />}
           </button>
+          <button
+            className="admin-mobile-close-btn"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close navigation"
+          >
+            <FiX />
+          </button>
         </div>
 
         <nav className="admin-nav">
@@ -166,7 +186,7 @@ export default function AdminDashboard({ onNavigateHome }) {
 
           <button
             className={`admin-nav-item ${activeTab === 'overview' ? 'active' : ''}`}
-            onClick={() => setActiveTab('overview')}
+            onClick={() => { setActiveTab('overview'); setSidebarOpen(false); }}
             title="Dashboard Overview"
           >
             <FiPieChart className="admin-nav-icon" />
@@ -175,7 +195,7 @@ export default function AdminDashboard({ onNavigateHome }) {
 
           <button
             className={`admin-nav-item ${activeTab === 'leads' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('leads'); setServiceFilterTarget('all'); }}
+            onClick={() => { setActiveTab('leads'); setServiceFilterTarget('all'); setSidebarOpen(false); }}
             title="Leads Database"
           >
             <FiGrid className="admin-nav-icon" />
@@ -191,7 +211,7 @@ export default function AdminDashboard({ onNavigateHome }) {
 
           <button
             className={`admin-nav-item ${activeTab === 'buyers' ? 'active' : ''}`}
-            onClick={() => setActiveTab('buyers')}
+            onClick={() => { setActiveTab('buyers'); setSidebarOpen(false); }}
             title="Buyers Hub"
           >
             <FiShoppingBag className="admin-nav-icon" style={{ color: activeTab === 'buyers' ? 'var(--md-primary)' : 'inherit' }} />
@@ -205,7 +225,7 @@ export default function AdminDashboard({ onNavigateHome }) {
 
           <button
             className={`admin-nav-item ${activeTab === 'publishers' ? 'active' : ''}`}
-            onClick={() => setActiveTab('publishers')}
+            onClick={() => { setActiveTab('publishers'); setSidebarOpen(false); }}
             title="Publishers Hub"
           >
             <FiRadio className="admin-nav-icon" style={{ color: activeTab === 'publishers' ? '#00875a' : 'inherit' }} />
@@ -221,7 +241,7 @@ export default function AdminDashboard({ onNavigateHome }) {
 
           <button
             className={`admin-nav-item ${activeTab === 'staff' ? 'active' : ''}`}
-            onClick={() => setActiveTab('staff')}
+            onClick={() => { setActiveTab('staff'); setSidebarOpen(false); }}
             title="Team & Access Control"
           >
             <FiUsers className="admin-nav-icon" />
@@ -230,7 +250,7 @@ export default function AdminDashboard({ onNavigateHome }) {
 
           <button
             className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
-            onClick={() => setActiveTab('settings')}
+            onClick={() => { setActiveTab('settings'); setSidebarOpen(false); }}
             title="System Diagnostics & Settings"
           >
             <FiSettings className="admin-nav-icon" />
@@ -241,7 +261,7 @@ export default function AdminDashboard({ onNavigateHome }) {
 
           {!sidebarCollapsed && <span className="admin-nav-section-label">Quick Links</span>}
 
-          <button className="admin-nav-item" onClick={handleReturnHome} title="Return to Consumer Site">
+          <button className="admin-nav-item" onClick={() => { setSidebarOpen(false); handleReturnHome(); }} title="Return to Consumer Site">
             <FiHome className="admin-nav-icon" />
             {!sidebarCollapsed && <span>Public Website</span>}
           </button>
@@ -265,20 +285,20 @@ export default function AdminDashboard({ onNavigateHome }) {
           </button>
         </div>
       </aside>
+      {sidebarOpen && <button className="admin-sidebar-scrim" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
 
       {/* Main Workspace Content */}
       <main className="admin-main">
         {/* Sticky Header */}
         <header className="admin-header">
           <div className="admin-header-title-group">
-            <h1>
-              {activeTab === 'overview' && 'Analytics & Operations Hub'}
-              {activeTab === 'leads' && 'Consumer Quote Directory & Kanban'}
-              {activeTab === 'buyers' && 'Advertiser & Buyer Marketplace Requests'}
-              {activeTab === 'publishers' && 'Publisher & Traffic Partner Applications'}
-              {activeTab === 'staff' && 'Team Access & Permissions'}
-              {activeTab === 'settings' && 'Platform Diagnostics & Controls'}
-            </h1>
+            <button className="admin-mobile-menu-btn" onClick={() => { setSidebarCollapsed(false); setSidebarOpen(true); }} aria-label="Open navigation">
+              <FiMenu />
+            </button>
+            <div>
+              <span className="admin-header-eyebrow">{activeWorkspace.eyebrow}</span>
+              <h1>{activeWorkspace.title}</h1>
+            </div>
           </div>
 
           <div className="admin-header-actions">

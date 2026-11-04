@@ -73,8 +73,7 @@ EverTree Solutions is an ultra-premium quote-matching and consultation portal fo
 
 ### 1. Backend Server (FastAPI + Turso Cloud)
 ```bash
-# In one terminal
-cd backend
+# From the project root, in one terminal
 python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 

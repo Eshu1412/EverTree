@@ -265,8 +265,7 @@ export default function AdminOverview({
             </div>
           </div>
           <button
-            className="admin-btn admin-btn-sm"
-            style={{ background: '#3b82f6', color: '#ffffff', border: 'none' }}
+            className="admin-hub-action admin-hub-action--buyers"
             onClick={(e) => { e.stopPropagation(); if (onNavigateToBuyers) onNavigateToBuyers(); }}
           >
             <span>Open Hub</span>
@@ -319,8 +318,7 @@ export default function AdminOverview({
             </div>
           </div>
           <button
-            className="admin-btn admin-btn-sm"
-            style={{ background: '#00875a', color: '#ffffff', border: 'none' }}
+            className="admin-hub-action admin-hub-action--publishers"
             onClick={(e) => { e.stopPropagation(); if (onNavigateToPublishers) onNavigateToPublishers(); }}
           >
             <span>Open Hub</span>

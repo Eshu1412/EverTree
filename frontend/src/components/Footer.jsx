@@ -74,10 +74,10 @@ export default function Footer({ onQuoteClick }) {
             {/* Brand Block */}
             <div className="footer-brand">
               <div className="footer-logo">
-                <span className="footer-logo-frame">
-                  <img className="footer-logo-image" src="/evertree-symbol.svg" alt="EverTree Solutions" />
-                </span>
-                <span>EverTree <em>Solutions</em></span>
+                <svg className="brand-mark" viewBox="0 0 24 24" aria-hidden="true" style={{ width: '22px', height: '22px', fill: 'currentColor' }}>
+                  <path d="M12 3 22 21H2L12 3Z" />
+                </svg>
+                <span>EverTree</span>
               </div>
               <p className="footer-tagline">
                 Connecting you with vetted, pre-screened professionals nationwide. Transparent, secure, and obligation-free.

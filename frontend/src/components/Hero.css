@@ -1,465 +1,295 @@
-/* ══════════════════════════════════════════════════════
-   EverTree Solutions — Ultra-Rich Luxury Hero & Consultation
-   ══════════════════════════════════════════════════════ */
+/* ======================================================
+   EverTree Hero — Ultra Parallax Scrolling Engine
+   3D Multi-Plane Spatial Depth, Optical Mouse Tilt,
+   Inertia Lerp Physics & Smooth Dissolve Typography
+   ====================================================== */
 
 .hero {
   position: relative;
-  background: var(--gradient-hero-mesh);
-  color: var(--fg);
-  padding-top: calc(var(--nav-height) + clamp(1.5rem, 3.5vw, 3rem));
-  padding-bottom: 0;
+  width: 100%;
+  height: 100vh;
+  min-height: 720px;
   overflow: hidden;
+  background: #FAF8F5;
+  isolation: isolate;
+  perspective: 1400px;
+  transform-style: preserve-3d;
 }
 
-/* Subtle ambient aura shapes */
 .hero::before {
   content: '';
   position: absolute;
-  top: -100px;
-  right: -50px;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(11, 107, 92, 0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.hero-content {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1.5rem, 4vw, 3.5rem);
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
-  position: relative;
   z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgba(250, 248, 245, 0.88) 0%,
+    rgba(250, 248, 245, 0.52) 42%,
+    rgba(45, 58, 46, 0.08) 100%
+  );
 }
 
-.hero-text {
-  flex: 1 1 480px;
-  max-width: 620px;
+/* Layer 0: Deep Paper Landscape */
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transform-origin: center bottom;
+  will-change: transform;
+  transform-style: preserve-3d;
 }
 
-.hero-badge-wrap {
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+  display: block;
+  filter: saturate(0.92) contrast(1.04);
+}
+
+/* Layer 1: Atmospheric Aurora Orbs */
+.hero__aurora {
+  position: absolute;
+  inset: -20%;
+  background: 
+    radial-gradient(circle at 75% 25%, rgba(92, 135, 100, 0.38), transparent 28%),
+    radial-gradient(circle at 68% 70%, rgba(229, 215, 164, 0.28), transparent 32%),
+    radial-gradient(circle at 35% 85%, rgba(61, 90, 62, 0.16), transparent 35%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+/* Layer 2: 3D Celestial Orbit Rings */
+.hero__orbit {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+.hero__orbit--one {
+  width: min(48vw, 750px);
+  height: min(48vw, 750px);
+  right: -12vw;
+  top: 12%;
+  border: 1px solid rgba(45, 58, 46, 0.22);
+}
+
+.hero__orbit--two {
+  width: min(32vw, 480px);
+  height: min(32vw, 480px);
+  right: 6vw;
+  bottom: -12vw;
+  border: 1px solid rgba(45, 58, 46, 0.15);
+  opacity: 0.65;
+}
+
+.hero__orbit--three {
+  width: min(20vw, 320px);
+  height: min(20vw, 320px);
+  right: 20vw;
+  top: 38%;
+  border: 1px dashed rgba(229, 215, 164, 0.6);
+  box-shadow: 0 0 20px rgba(229, 215, 164, 0.15);
+}
+
+/* Layer 3: Floating Deconstructed Foreground Content */
+.hero__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 144px 32px 0;
+  transform-style: preserve-3d;
+}
+
+.hero-kicker {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 12px;
-  background: #EDF7F5;
-  border: 1px solid rgba(11, 107, 92, 0.25);
-  border-radius: var(--radius-full);
-  margin-bottom: 1rem;
+  margin-bottom: 24px;
+  padding: 8px 16px;
+  border: 1px solid rgba(45, 58, 46, 0.2);
+  border-radius: 999px;
+  background: rgba(250, 248, 245, 0.85);
+  box-shadow: 0 3px 18px rgba(250, 248, 245, 0.5);
+  backdrop-filter: blur(8px);
+  color: #1F2D20;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  will-change: transform;
+  transform-style: preserve-3d;
 }
 
-.hero-badge-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #0B6B5C;
-  box-shadow: 0 0 8px rgba(11, 107, 92, 0.6);
-  animation: pulseEmerald 2s infinite ease-in-out;
+.hero h1 {
+  max-width: 950px;
+  color: #1F2D20;
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+  text-shadow: 0 1px 14px rgba(250, 248, 245, 0.92), 0 0 30px rgba(250, 248, 245, 0.6);
+  margin-bottom: 24px;
+  will-change: transform, opacity, filter;
+  transform-style: preserve-3d;
 }
 
-@keyframes pulseEmerald {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.6; }
-}
-
-.hero-badge {
-  font-family: var(--font);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #0B6B5C;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.hero-title {
-  margin: 0 0 1rem;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: clamp(2.25rem, 4.5vw, 3.4rem);
-  line-height: 1.1;
-  color: #03363A;
-  letter-spacing: -0.035em;
-}
-
-.hero-title-gradient {
-  background: linear-gradient(135deg, #03363A 0%, #0B6B5C 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-}
-
-.hero-subtitle {
-  margin: 0 0 1.5rem;
-  font-family: var(--font);
-  font-size: clamp(1rem, 1.35vw, 1.125rem);
-  line-height: 1.55;
-  max-width: 520px;
-  color: #3F5655;
+.hero-summary {
+  max-width: 580px;
+  margin-bottom: 32px;
+  color: #536352;
+  font-size: clamp(1.1rem, 1.4vw, 1.25rem);
+  line-height: 1.5;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
 }
 
 .hero-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
   align-items: center;
-}
-
-/* ── Consultation Card (Executive Luxury Formulation - Compact) ─ */
-.hero-consultation {
-  flex: 0 1 440px;
-  width: 100%;
-  max-width: 440px;
-  background: #FFFFFF;
-  border: 2px solid #03363A;
-  border-radius: 16px;
-  padding: clamp(18px, 2.5vw, 24px);
-  box-sizing: border-box;
-  box-shadow: 0 20px 48px -12px rgba(3, 54, 58, 0.14),
-              0 0 0 1px rgba(11, 107, 92, 0.12);
-  position: relative;
-  transition: box-shadow var(--duration) var(--ease);
-}
-
-.hero-consultation::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 20px;
-  right: 20px;
-  height: 3px;
-  background: var(--gradient-gold);
-  border-radius: 2px;
-}
-
-.consultation-title {
-  margin: 0 0 3px;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 21px;
-  color: #03363A;
-  letter-spacing: -0.02em;
-}
-
-.consultation-desc {
-  margin: 0 0 10px;
-  font-family: var(--font);
-  font-size: 13px;
-  color: #3F5655;
-  line-height: 1.4;
-}
-
-/* Luxury Compact Role Switcher within Consultation Card */
-.consultation-role-switcher {
-  display: flex;
-  gap: 4px;
-  background: #EDF7F5;
-  padding: 3px;
-  border-radius: 9px;
-  margin-bottom: 11px;
-  border: 1px solid rgba(11, 107, 92, 0.2);
-}
-
-.consultation-role-btn {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 7px 10px;
-  border-radius: 7px;
-  font-family: var(--font-heading);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #3F5655;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.consultation-role-btn .role-icon {
-  font-size: 13px;
-  color: #0B6B5C;
-}
-
-.consultation-role-btn.active {
-  background: #03363A;
-  color: #FFFFFF;
-  font-weight: 700;
-  box-shadow: 0 2px 6px rgba(3, 54, 58, 0.18);
-}
-
-.consultation-role-btn.active .role-icon {
-  color: #E8B84A;
-}
-
-.consultation-form {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-
-/* 2-Column Responsive Grid */
-.consultation-row-2col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.consultation-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  text-align: left;
-}
-
-.consultation-field label {
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 600;
-  color: #12302F;
-}
-
-.consultation-field input,
-.consultation-field select,
-.consultation-field textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 9px 12px;
-  border: 1.5px solid #8AA3A0;
-  border-radius: 7px;
-  font-family: var(--font);
-  font-size: 13.5px;
-  color: #12302F;
-  background: #FFFFFF;
-  transition: all 0.2s ease;
-}
-
-.consultation-field textarea {
-  min-height: 44px;
-  height: 44px;
-  padding: 6px 12px;
-  resize: vertical;
-}
-
-.consultation-field select {
-  cursor: pointer;
-  appearance: auto;
-}
-
-.consultation-field input:focus,
-.consultation-field select:focus,
-.consultation-field textarea:focus {
-  outline: none;
-  border-color: #03363A;
-  box-shadow: 0 0 0 2.5px rgba(11, 107, 92, 0.15);
-}
-
-.consultation-cta {
-  width: 100%;
-  background: var(--gradient-gold);
-  color: #03363A;
-  border: none;
-  border-radius: 8px;
-  padding: 12px;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 15px;
-  letter-spacing: 0.02em;
-  min-height: 44px;
-  cursor: pointer;
-  margin-top: 4px;
-  box-shadow: var(--shadow-gold);
-  transition: all 0.2s ease;
-}
-
-.consultation-cta:hover {
-  background: linear-gradient(135deg, #F8CE6A 0%, #EEBE51 50%, #D49D2B 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px -2px rgba(232, 184, 74, 0.55);
-}
-
-.hero-consultation small {
-  display: block;
-  font-family: var(--font);
-  font-size: 11px;
-  color: #5E7673;
-  text-align: center;
-  margin-top: 3px;
-}
-
-.consultation-tcpa {
-  font-family: var(--font);
-  font-size: 10.5px;
-  color: #5E7673;
-  line-height: 1.38;
-  text-align: left;
-  margin: 3px 0 0;
-}
-
-.consultation-success {
-  background: #EDF7F5;
-  border: 1.5px solid #0B6B5C;
-  border-radius: 10px;
-  padding: 18px;
-  color: #03363A;
-  text-align: left;
-}
-
-.consultation-success strong {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: 16px;
-  margin-bottom: 5px;
-  color: #0B6B5C;
-}
-
-.consultation-success p {
-  margin: 0;
-  font-size: 13.5px;
-  line-height: 1.45;
-}
-
-/* ── Benefits Row ────────────────────────────────────── */
-.hero-benefits {
-  display: flex;
+  gap: 16px;
+  margin-bottom: 28px;
   flex-wrap: wrap;
-  gap: clamp(14px, 2.5vw, 32px);
-  padding: 18px 0;
-  border-top: 1px solid #DDE7E3;
-  font-family: var(--font);
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #3F5655;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
 }
 
-.hero-benefit-item {
+.hero-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: #2D3A2E;
+  color: #FAF8F5;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border: 1px solid #2D3A2E;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(45, 58, 46, 0.2);
+  transition: all 0.22s ease;
 }
 
-.benefit-icon-badge {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #EDF7F5;
-  color: #0B6B5C;
-  display: flex;
+.hero-cta:hover {
+  background: #3D5A3E;
+  border-color: #3D5A3E;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(45, 58, 46, 0.25);
+}
+
+.hero-secondary {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 800;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: rgba(250, 248, 245, 0.85);
+  color: #2D3A2E;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(45, 58, 46, 0.25);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.22s ease;
 }
 
-/* ── Trusted By Enterprise Bar ───────────────────────── */
-.trusted-by-bar {
-  padding: 24px 0;
-  border-bottom: 1px solid #DDE7E3;
-  background: #FFFFFF;
+.hero-secondary:hover {
+  background: #E8EFE5;
+  border-color: #3D5A3E;
+  transform: translateY(-2px);
 }
 
-.trusted-by-inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.trusted-by-label {
-  font-family: var(--font);
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #3F5655;
-  text-transform: uppercase;
-}
-
-.trusted-by-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(14px, 2vw, 28px);
-  align-items: center;
-}
-
-.trusted-by-item {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 14.5px;
-  color: #5E7673;
+.hero-explore {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.trusted-by-rating {
-  color: #E8B84A;
-  font-size: 13.5px;
-}
-
-.trusted-by-highlight {
-  color: #03363A;
-  font-weight: 800;
-  background: #EDF5F3;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-}
-
-@media (max-width: 900px) {
-  .hero-content {
-    flex-direction: column;
-    gap: 28px;
-  }
-  .hero-consultation {
-    max-width: 100%;
-  }
-  .consultation-row-2col {
-    grid-template-columns: 1fr;
-  }
-  .hero-benefits {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .trusted-by-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-}
-
-/* Error banner inside consultation form */
-.consultation-error-banner {
-  background: #FEF2F2;
-  border: 1px solid #F87171;
-  color: #991B1B;
-  padding: 8px 12px;
-  border-radius: 7px;
-  font-family: var(--font);
-  font-size: 12px;
-  line-height: 1.4;
-  text-align: left;
-}
-
-/* Legal modal trigger links in consultation TCPA disclaimer */
-.consultation-legal-link {
   background: none;
   border: none;
-  padding: 0;
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
-  color: #0B6B5C;
+  color: #3D5A3E;
+  font-size: 13px;
   font-weight: 600;
-  text-decoration: underline;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
-  display: inline;
+  padding: 4px 0;
+  margin-bottom: 24px;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.consultation-legal-link:hover {
-  color: #03363A;
+.hero-explore:hover {
+  color: #2D3A2E;
+  transform: translateX(3px);
+}
+
+/* Layer 4: Floating Scroll Cue Indicator */
+.hero__scroll {
+  position: absolute;
+  z-index: 3;
+  right: max(32px, calc((100vw - 1216px) / 2));
+  bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: #1F2D20;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-shadow: 0 1px 8px rgba(250, 248, 245, 0.95);
+  text-transform: uppercase;
+  cursor: pointer;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  transition: color 0.2s ease;
+}
+
+.hero__scroll:hover {
+  color: #3D5A3E;
+}
+
+.hero__scroll i {
+  width: 48px;
+  height: 1px;
+  background: currentColor;
+  box-shadow: 0 1px 8px rgba(250, 248, 245, 0.95);
+  transition: width 0.2s ease;
+}
+
+.hero__scroll:hover i {
+  width: 60px;
+}
+
+/* Fallback for Mobile and Reduced Motion */
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .hero__media, 
+  .hero__aurora, 
+  .hero__orbit, 
+  .hero__content,
+  .hero-kicker,
+  .hero h1,
+  .hero-summary,
+  .hero-actions,
+  .hero__scroll {
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  .hero__orbit {
+    display: none;
+  }
+  .hero__aurora {
+    opacity: 0.5;
+  }
 }

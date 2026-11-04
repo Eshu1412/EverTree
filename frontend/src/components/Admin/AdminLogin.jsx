@@ -26,9 +26,31 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await res.json();
+      // Vite returns an empty 500 response when its API proxy cannot reach the
+      // FastAPI server. Read the body defensively so that outage is surfaced
+      // clearly instead of exposing a JSON parsing error to the user.
+      const responseText = await res.text();
+      let data = {};
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText);
+        } catch {
+          if (!res.ok) {
+            throw new Error('The admin service returned an invalid response. Please try again shortly.');
+          }
+          throw new Error('The admin service returned an unexpected response. Please try again.');
+        }
+      }
+
       if (!res.ok) {
+        if (!responseText && res.status >= 500) {
+          throw new Error('The admin service is unavailable. Please start the backend server and try again.');
+        }
         throw new Error(data.detail || 'Login failed. Please check credentials.');
+      }
+
+      if (!data.user) {
+        throw new Error('The admin service returned an incomplete response. Please try again.');
       }
 
       // No persistent localStorage auto-login: user must log in every time #admin is visited
@@ -77,7 +99,9 @@ export default function AdminLogin({ onLoginSuccess, theme = 'light', onToggleTh
       >
         <div className="admin-brand-header">
           <div className="admin-logo-sq">
-            <img src="/evertree-symbol.svg" alt="EverTree Solutions" />
+            <svg viewBox="0 0 24 24" aria-hidden="true" style={{ width: '22px', height: '22px', fill: 'currentColor' }}>
+              <path d="M12 3 22 21H2L12 3Z" />
+            </svg>
           </div>
           <div className="admin-brand-title">
             EverTree <span>Solutions</span>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FaCheckCircle, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaShieldAlt } from 'react-icons/fa'
+import { FaCheckCircle, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaShieldAlt, FaBuilding } from 'react-icons/fa'
+import { FiArrowLeft } from 'react-icons/fi'
 import './ThankYouView.css'
 
 export default function ThankYouView({ leadData, onNavigateHome }) {
@@ -29,9 +30,11 @@ export default function ThankYouView({ leadData, onNavigateHome }) {
         >
           <div className="thankyou-brand-badge">
             <span className="thankyou-logo-frame">
-              <img src="/evertree-symbol.svg" alt="EverTree" className="thankyou-logo-img" />
+              <svg className="thankyou-brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 22 21H2L12 3Z" />
+              </svg>
             </span>
-            <span>EverTree <em>Solutions</em></span>
+            <span className="thankyou-brand-text">EverTree</span>
           </div>
 
           <div className="thankyou-icon">
@@ -54,6 +57,12 @@ export default function ThankYouView({ leadData, onNavigateHome }) {
                 <span className="thankyou-label"><FaUser /> Name</span>
                 <span className="thankyou-val">{userName}</span>
               </div>
+              {leadData?.company && (
+                <div className="thankyou-grid-item">
+                  <span className="thankyou-label"><FaBuilding /> Company</span>
+                  <span className="thankyou-val">{leadData.company}</span>
+                </div>
+              )}
               {leadData?.service && (
                 <div className="thankyou-grid-item">
                   <span className="thankyou-label">Service</span>
@@ -95,8 +104,9 @@ export default function ThankYouView({ leadData, onNavigateHome }) {
             )}
           </div>
 
-          <button onClick={onNavigateHome} className="btn btn-secondary thankyou-btn">
-            Return to Home Page
+          <button onClick={onNavigateHome} className="thankyou-btn" type="button">
+            <FiArrowLeft className="thankyou-btn-icon" />
+            <span>Return to Home Page</span>
           </button>
         </motion.div>
       </div>

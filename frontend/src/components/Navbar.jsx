@@ -57,10 +57,10 @@ export default function Navbar({
     >
       <div className="navbar-inner">
         <a className="navbar-logo" href="/" onClick={(e) => { e.preventDefault(); handleLinkClick(onNavigateHome) }}>
-          <span className="navbar-logo-frame">
-            <img className="navbar-logo-image" src="/evertree-symbol.svg" alt="EverTree Solutions" />
-          </span>
-          <span className="navbar-brand-text">EverTree <em>Solutions</em></span>
+          <svg className="brand-mark" viewBox="0 0 24 24" aria-hidden="true" style={{ width: '20px', height: '20px', fill: 'currentColor' }}>
+            <path d="M12 3 22 21H2L12 3Z" />
+          </svg>
+          <span className="navbar-brand-text">EverTree</span>
         </a>
 
         <div className="navbar-links">
@@ -94,10 +94,10 @@ export default function Navbar({
 
         <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`}>
           <div className="mobile-menu-brand">
-            <span className="navbar-logo-frame">
-              <img className="navbar-logo-image" src="/evertree-symbol.svg" alt="EverTree Solutions" />
-            </span>
-            <span className="navbar-brand-text">EverTree <em>Solutions</em></span>
+            <svg className="brand-mark" viewBox="0 0 24 24" aria-hidden="true" style={{ width: '20px', height: '20px', fill: 'currentColor' }}>
+            <path d="M12 3 22 21H2L12 3Z" />
+          </svg>
+          <span className="navbar-brand-text">EverTree</span>
           </div>
           {categories.map((cat) => (
             <button
