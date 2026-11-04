@@ -30,18 +30,64 @@ function ArrowRight() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path
 function ArrowUpRight() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11" /></svg> }
 function BrandMark() { return <svg className="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 21H2L12 3Z" /></svg> }
 
-function Navbar({ onQuoteClick, onNavigateHome, onNavigateSection }) {
-  const [menuOpen, setMenuOpen] = useState(false); const [scrolled, setScrolled] = useState(false)
+function Navbar({ onQuoteClick, onNavigateHome, onNavigateSection, menuOpen, setMenuOpen }) {
+  const [scrolled, setScrolled] = useState(false)
   useEffect(() => { const onScroll = () => setScrolled(window.scrollY > 20); onScroll(); window.addEventListener('scroll', onScroll, { passive: true }); return () => window.removeEventListener('scroll', onScroll) }, [])
   useEffect(() => { document.body.style.overflow = menuOpen ? 'hidden' : ''; return () => { document.body.style.overflow = '' } }, [menuOpen])
   const home = (event) => { event.preventDefault(); setMenuOpen(false); onNavigateHome() }
   const quote = (event) => { event.preventDefault(); setMenuOpen(false); onQuoteClick() }
-  return <header className={`site-nav ${scrolled ? 'site-nav--scrolled' : ''}`}><div className="nav-inner">
-    <nav className="nav-links animate-fade-down stagger-1" aria-label="Primary navigation"><a className="nav-link nav-link--solutions" href="#solutions" onClick={(e) => onNavigateSection(e, 'solutions')}>Services <ChevronDown /></a><a className="nav-link" href="#how-it-works" onClick={(e) => onNavigateSection(e, 'how-it-works')}>How it works</a><a className="nav-link" href="#faq" onClick={(e) => onNavigateSection(e, 'faq')}>FAQ</a></nav>
-    <a className="brand animate-fade-down stagger-2" href="#top" onClick={home} aria-label="EverTree home"><BrandMark /><span>EverTree</span></a><a className="nav-cta animate-fade-down stagger-3" href="#start" onClick={quote}>Find Your Match</a>
-    <button className={`menu-toggle ${menuOpen ? 'menu-toggle--open' : ''}`} type="button" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
-    <div className={`mobile-menu ${menuOpen ? 'mobile-menu--open' : ''}`}><nav className="mobile-menu__links" aria-label="Mobile navigation"><a href="#solutions" onClick={(e) => { setMenuOpen(false); onNavigateSection(e, 'solutions') }}>Services</a><a href="#how-it-works" onClick={(e) => { setMenuOpen(false); onNavigateSection(e, 'how-it-works') }}>How it works</a><a href="#faq" onClick={(e) => { setMenuOpen(false); onNavigateSection(e, 'faq') }}>FAQ</a><a className="mobile-menu__cta" href="#start" onClick={quote}>Find Your Match</a></nav><div className="mobile-menu__contact"><span className="mobile-menu__contact-title">Direct Inquiries</span><a href="tel:8558312264" className="mobile-menu__contact-link">📞 (855) 831-2264</a><a href="mailto:support@evertreesolutions.com" className="mobile-menu__contact-link">✉ support@evertreesolutions.com</a></div></div>
-  </div></header>
+  return <>
+    <header className={`site-nav ${scrolled ? 'site-nav--scrolled' : ''}`}>
+      <div className="nav-inner">
+        <nav className="nav-links animate-fade-down stagger-1" aria-label="Primary navigation">
+          <a className="nav-link nav-link--solutions" href="#solutions" onClick={(e) => onNavigateSection(e, 'solutions')}>Services <ChevronDown /></a>
+          <a className="nav-link" href="#how-it-works" onClick={(e) => onNavigateSection(e, 'how-it-works')}>How it works</a>
+          <a className="nav-link" href="#faq" onClick={(e) => onNavigateSection(e, 'faq')}>FAQ</a>
+        </nav>
+        <a className="brand animate-fade-down stagger-2" href="#top" onClick={home} aria-label="EverTree home"><BrandMark /><span>EverTree</span></a>
+        <a className="nav-cta animate-fade-down stagger-3" href="#start" onClick={quote}>Find Your Match</a>
+        <button className={`menu-toggle ${menuOpen ? 'menu-toggle--open' : ''}`} type="button" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+          <span /><span />
+        </button>
+      </div>
+    </header>
+
+    <AnimatePresence>
+      {menuOpen && (
+        <motion.div
+          className="mobile-menu-drawer"
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="mobile-menu-drawer__header">
+            <a className="brand" href="#top" onClick={home}><BrandMark /><span>EverTree</span></a>
+            <button type="button" className="mobile-menu-drawer__close" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+              ✕
+            </button>
+          </div>
+
+          <nav className="mobile-menu-drawer__links" aria-label="Mobile navigation">
+            <a href="#solutions" onClick={(e) => { setMenuOpen(false); onNavigateSection(e, 'solutions') }}>Services</a>
+            <a href="#how-it-works" onClick={(e) => { setMenuOpen(false); onNavigateSection(e, 'how-it-works') }}>How it works</a>
+            <a href="#faq" onClick={(e) => { setMenuOpen(false); onNavigateSection(e, 'faq') }}>FAQ</a>
+          </nav>
+
+          <div className="mobile-menu-drawer__footer">
+            <button className="button button--dark mobile-menu-drawer__cta" type="button" onClick={quote}>
+              Find Your Match <ArrowRight />
+            </button>
+            <div className="mobile-menu-drawer__contact">
+              <span className="mobile-menu-drawer__contact-title">Direct Inquiries</span>
+              <a href="tel:8558312264" className="mobile-menu-drawer__contact-link">📞 (855) 831-2264</a>
+              <a href="mailto:support@evertreesolutions.com" className="mobile-menu-drawer__contact-link">✉ support@evertreesolutions.com</a>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </>
 }
 function TrustedBy() { return <div className="trusted animate-fade-up stagger-5"><div className="trusted__meta"><span className="trusted__stars">★★★★★</span><span className="trusted__score">4.9/5 Rating</span><span className="trusted__sep">•</span><span>15,000+ Comparisons</span><span className="trusted__sep">•</span><span className="trusted__badge">Top 100 US Providers</span></div><p>Explore with confidence across verified verticals</p><div className="trusted__logos animate-fade-up stagger-6"><span className="logo-playfair">Insurance</span><span className="logo-oswald">HOME</span><span className="logo-montserrat">Finance</span><span className="logo-roboto">TRAVEL</span><span className="logo-raleway">Wellbeing</span></div></div> }
 /* Hero imported from ./components/Hero */
@@ -193,13 +239,12 @@ function Partners({ onFormSubmitted, initialRole = 'buyer' }) {
 }
 function HowItWorks({ onOpenQuote }) { const steps = [['Choose your service', 'Pick the help you need and open its short quote form right away.'], ['Share the essentials', 'Provide your name, contact details, and ZIP code. Add context only if you want to.'], ['Get local options', 'A matched specialist follows up with relevant quotes and next steps.']]; return <section className="process section-pad" id="how-it-works"><div className="process__lead"><div className="eyebrow">A simpler process</div><h2>One service. One short form. Clear next steps.</h2><p>Choose what you need and share only the essentials to start receiving relevant local options.</p><button className="button button--dark" onClick={() => onOpenQuote('')}>Start a quote <ArrowRight /></button></div><ol className="process__steps">{steps.map(([title, copy], index) => <li key={title}><span>0{index + 1}</span><div><h3>{title}</h3><p>{copy}</p></div></li>)}</ol></section> }
 function FAQ({ onOpenQuote }) { const [open, setOpen] = useState(null); return <section className="faq-new section-pad" id="faq"><div><div className="eyebrow">Answers, clearly</div><h2>Questions before you start?</h2><p>Everything you need to know about exploring services and requesting support.</p><button className="button button--dark" onClick={() => onOpenQuote('')}>Start a quote <ArrowRight /></button></div><div className="faq-new__list">{faqs.map(([question, answer], index) => <article className={open === index ? 'is-open' : ''} key={question}><button onClick={() => setOpen(open === index ? null : index)} aria-expanded={open === index}><span>{question}</span><b>{open === index ? '−' : '+'}</b></button>{open === index && <p>{answer}</p>}</article>)}</div></section> }
-function Quote() { return <section className="quote"><div className="quote__mark">“</div><blockquote>EverTree helped me stop spiralling through search results and finally make a decision I felt good about.</blockquote><div className="quote__person"><span className="person-dot">JM</span><div><strong>Jordan M.</strong><small>EverTree customer</small></div></div></section> }
 function Start({ onOpenQuote }) { return <section className="start" id="start"><div className="start__orb" aria-hidden="true" /><div className="start__content"><div className="eyebrow eyebrow--light">Ready when you are</div><h2>Find a clearer way forward.</h2><p>Choose a service, answer a few relevant questions, then use the restored quote flow to request help.</p><button className="button button--light" onClick={() => onOpenQuote('')}>Find Your Match <ArrowRight /></button></div></section> }
 function Footer({ onNavigateHome, onOpenQuote }) { return <footer className="footer"><div className="footer__top"><a className="brand" href="#top" onClick={(e) => { e.preventDefault(); onNavigateHome() }}><BrandMark /><span>EverTree</span></a><p>A more considered way to navigate life’s next decision.</p><button className="footer__toplink" onClick={() => onNavigateHome()}>Back to top <ArrowUpRight /></button></div><div className="footer__bottom"><span>© 2026 EverTree Solutions</span><div><a href="#faq">FAQ</a><button onClick={() => onOpenQuote('')}>Get a quote</button><a href="mailto:hello@evertree.example">Contact</a></div></div></footer> }
-function Home({ onNavigateVertical, onOpenQuote, onFormSubmitted }) { const [partnerRole, setPartnerRole] = useState('buyer'); const showPartners = (role) => { setPartnerRole(role); window.setTimeout(() => document.getElementById('partners')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0) }; return <><Hero onShowPartners={showPartners} /><Intro /><Services onNavigateVertical={onNavigateVertical} onOpenQuote={onOpenQuote} /><HowItWorks onOpenQuote={onOpenQuote} /><Partners initialRole={partnerRole} onFormSubmitted={onFormSubmitted} /><FAQ onOpenQuote={onOpenQuote} /><Quote /><Start onOpenQuote={onOpenQuote} /></> }
+function Home({ onNavigateVertical, onOpenQuote, onFormSubmitted }) { const [partnerRole, setPartnerRole] = useState('buyer'); const showPartners = (role) => { setPartnerRole(role); window.setTimeout(() => document.getElementById('partners')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0) }; return <><Hero onShowPartners={showPartners} /><Intro /><Services onNavigateVertical={onNavigateVertical} onOpenQuote={onOpenQuote} /><HowItWorks onOpenQuote={onOpenQuote} /><Partners initialRole={partnerRole} onFormSubmitted={onFormSubmitted} /><FAQ onOpenQuote={onOpenQuote} /><Start onOpenQuote={onOpenQuote} /></> }
 
 export default function App() {
-  const [quoteOpen, setQuoteOpen] = useState(false); const [selectedService, setSelectedService] = useState(''); const [viewState, setViewState] = useState('home'); const [activeVertical, setActiveVertical] = useState(''); const [activeSub, setActiveSub] = useState(''); const [submittedLead, setSubmittedLead] = useState(null); const [showContactModal, setShowContactModal] = useState(false); const [activeServicePhone, setActiveServicePhone] = useState('')
+  const [quoteOpen, setQuoteOpen] = useState(false); const [selectedService, setSelectedService] = useState(''); const [viewState, setViewState] = useState('home'); const [activeVertical, setActiveVertical] = useState(''); const [activeSub, setActiveSub] = useState(''); const [submittedLead, setSubmittedLead] = useState(null); const [showContactModal, setShowContactModal] = useState(false); const [activeServicePhone, setActiveServicePhone] = useState(''); const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showFloatingPill, setShowFloatingPill] = useState(false)
   useEffect(() => {
     const handleScroll = () => {
@@ -218,9 +263,9 @@ export default function App() {
   const openQuote = (service = '') => { setSelectedService(service); setQuoteOpen(true) }
   const onFormSubmitted = (lead) => { setSubmittedLead(lead); setQuoteOpen(false); setViewState('thank-you'); const phone = getServicePhone(lead?.service, lead?.category, contactConfig); if (contactConfig?.enabled !== false && phone?.trim()) { setActiveServicePhone(phone.trim()); setShowContactModal(true) }; window.scrollTo({ top: 0, behavior: 'smooth' }) }
   if (viewState === 'admin') return <AdminDashboard onNavigateHome={navigateHome} />
-  return <><Navbar onQuoteClick={() => openQuote('')} onNavigateHome={navigateHome} onNavigateSection={navigateSection} /><main className="app-main"><AnimatePresence mode="wait">{viewState === 'home' && <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><Home onNavigateVertical={navigateVertical} onOpenQuote={openQuote} onFormSubmitted={onFormSubmitted} /></motion.div>}{viewState === 'vertical' && <motion.div key={`vertical-${activeVertical}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{activeVertical === 'travel' ? <TravelServicesView onNavigateHome={navigateHome} onFormSubmitted={onFormSubmitted} /> : <CategoryView verticalId={activeVertical} onNavigateHome={navigateHome} onSelectSubVertical={navigateSubVertical} />}</motion.div>}{viewState === 'sub-vertical' && <motion.div key={`sub-${activeVertical}-${activeSub}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><SubVerticalView verticalId={activeVertical} subId={activeSub} onNavigateHome={navigateHome} onNavigateVertical={navigateVertical} onFormSubmitted={onFormSubmitted} /></motion.div>}{viewState === 'thank-you' && <ThankYouView leadData={submittedLead} onNavigateHome={navigateHome} />}</AnimatePresence></main><Footer onNavigateHome={navigateHome} onOpenQuote={openQuote} /><QuoteForm isOpen={quoteOpen} onClose={() => setQuoteOpen(false)} defaultService={selectedService} onNavigateVertical={navigateVertical} onFormSubmitted={onFormSubmitted} /><ContactRedirectModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} config={contactConfig} leadData={submittedLead} overridePhone={activeServicePhone} />
+  return <><Navbar onQuoteClick={() => openQuote('')} onNavigateHome={navigateHome} onNavigateSection={navigateSection} menuOpen={mobileMenuOpen} setMenuOpen={setMobileMenuOpen} /><main className="app-main"><AnimatePresence mode="wait">{viewState === 'home' && <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><Home onNavigateVertical={navigateVertical} onOpenQuote={openQuote} onFormSubmitted={onFormSubmitted} /></motion.div>}{viewState === 'vertical' && <motion.div key={`vertical-${activeVertical}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{activeVertical === 'travel' ? <TravelServicesView onNavigateHome={navigateHome} onFormSubmitted={onFormSubmitted} /> : <CategoryView verticalId={activeVertical} onNavigateHome={navigateHome} onSelectSubVertical={navigateSubVertical} />}</motion.div>}{viewState === 'sub-vertical' && <motion.div key={`sub-${activeVertical}-${activeSub}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><SubVerticalView verticalId={activeVertical} subId={activeSub} onNavigateHome={navigateHome} onNavigateVertical={navigateVertical} onFormSubmitted={onFormSubmitted} /></motion.div>}{viewState === 'thank-you' && <ThankYouView leadData={submittedLead} onNavigateHome={navigateHome} />}</AnimatePresence></main><Footer onNavigateHome={navigateHome} onOpenQuote={openQuote} /><QuoteForm isOpen={quoteOpen} onClose={() => setQuoteOpen(false)} defaultService={selectedService} onNavigateVertical={navigateVertical} onFormSubmitted={onFormSubmitted} /><ContactRedirectModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} config={contactConfig} leadData={submittedLead} overridePhone={activeServicePhone} />
     <AnimatePresence>
-      {showFloatingPill && !quoteOpen && (
+      {showFloatingPill && !quoteOpen && !mobileMenuOpen && (
         <motion.button
           type="button"
           className="floating-quote-pill"
