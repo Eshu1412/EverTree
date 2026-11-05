@@ -208,7 +208,7 @@ export default function AffiliateSignup({ onNavigateHome }) {
     }
 
     if (!formData.agreedTerms) {
-      setErrorMessage('You must review and agree to Xy7Elite Terms of Service to apply.');
+      setErrorMessage('You must review and agree to EverTree Solutions Terms of Service to apply.');
       return;
     }
 
@@ -312,7 +312,7 @@ export default function AffiliateSignup({ onNavigateHome }) {
             <div className="affiliate-blocked-icon">🔒</div>
             <h2>Affiliate Applications Temporarily Paused</h2>
             <p className="affiliate-blocked-desc">
-              The Xy7Elite / EverTree affiliate onboarding application is currently not accepting new online submissions. If you have an active publisher partnership inquiry or were invited directly, please contact our publisher management team.
+              The EverTree Solutions affiliate onboarding application is currently not accepting new online submissions. If you have an active publisher partnership inquiry or were invited directly, please contact our publisher management team.
             </p>
 
             <div className="affiliate-blocked-contact">
@@ -369,7 +369,7 @@ export default function AffiliateSignup({ onNavigateHome }) {
           >
             <div className="affiliate-success-check">✓</div>
             <span className="affiliate-badge-gold">Application Successfully Received</span>
-            <h2>Welcome to Xy7Elite, {submittedSuccess.name.split(' ')[0]}!</h2>
+            <h2>Welcome to EverTree Solutions, {submittedSuccess.name.split(' ')[0]}!</h2>
             <p className="affiliate-success-copy">
               Your publisher application has been logged into our partner management system. A dedicated affiliate manager will review your submission and connect with you on Microsoft Teams or email within <strong>24 business hours</strong>.
             </p>
@@ -423,7 +423,7 @@ export default function AffiliateSignup({ onNavigateHome }) {
             </button>
             <span className="affiliate-nav__sep">/</span>
             <div className="affiliate-nav__network">
-              <span className="network-pill">Xy7Elite Partner Network</span>
+              <span className="network-pill">EverTree Solutions Partner Network</span>
             </div>
           </div>
 
@@ -446,7 +446,7 @@ export default function AffiliateSignup({ onNavigateHome }) {
           <div className="affiliate-hero__eyebrow">PUBLISHER & AFFILIATE ONBOARDING</div>
           <h1 className="affiliate-hero__title">Affiliate Network Application</h1>
           <p className="affiliate-hero__subtitle">
-            Scale your performance with Xy7Elite. Direct high-converting CPA, CPL, and Pay Per Call offers with automated tracking, dedicated affiliate reps, and reliable bi-weekly or weekly disbursements.
+            Scale your performance with EverTree Solutions. Direct high-converting CPA, CPL, and Pay Per Call offers with automated tracking, dedicated affiliate reps, and reliable bi-weekly or weekly disbursements.
           </p>
         </section>
 
@@ -878,7 +878,7 @@ export default function AffiliateSignup({ onNavigateHome }) {
               />
               <span className="custom-check-box">{formData.agreedTerms ? '✓' : ''}</span>
               <span className="terms-label-text">
-                I agree to <strong>Xy7Elite's Terms of Service</strong> and certify that all provided information is accurate and compliant with industry regulations. <span>*</span>
+                I agree to <strong>EverTree Solutions Terms of Service</strong> and certify that all provided information is accurate and compliant with industry regulations. <span>*</span>
               </span>
             </label>
           </div>

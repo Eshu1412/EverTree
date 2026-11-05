@@ -1324,7 +1324,7 @@ async def bulk_delete_publishers_records(req: BulkDeleteRequest):
     return {"success": True, "deleted_count": count, "message": f"Deleted {count} publishers"}
 
 
-# ── Affiliate Signups API (Everflow / Xy7Elite) ─────────
+# ── Affiliate Signups API (EverTree Solutions) ─────────
 
 @app.get("/api/affiliates/status")
 async def get_affiliate_form_status():
@@ -1406,7 +1406,7 @@ async def submit_affiliate_signup(req: AffiliateSignupRequest):
     return {
         "success": True,
         "id": aff_id,
-        "message": f"Thank you, {req.first_name}! Your affiliate application for Xy7Elite has been successfully submitted."
+        "message": f"Thank you, {req.first_name}! Your affiliate application for EverTree Solutions has been successfully submitted."
     }
 
 

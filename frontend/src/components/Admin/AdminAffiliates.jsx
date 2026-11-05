@@ -254,7 +254,7 @@ export default function AdminAffiliates({ onUpdateRefresh, onShowSnackbar }) {
             <div style={{ fontSize: '0.92rem', color: 'var(--md-on-surface-variant)' }}>
               {routeBlocked
                 ? 'Visitors to the affiliate link see the paused / restricted access screen. Submissions are rejected with HTTP 403.'
-                : 'The Everflow / Xy7Elite affiliate signup form is live. New applicants are saved to the database and viewable below.'}
+                : 'The EverTree Solutions affiliate signup form is live. New applicants are saved to the database and viewable below.'}
             </div>
           </div>
 
@@ -309,7 +309,7 @@ export default function AdminAffiliates({ onUpdateRefresh, onShowSnackbar }) {
           <div className="admin-metric-value-row">
             <div className="admin-metric-value">{totalAffiliates}</div>
           </div>
-          <div className="admin-metric-subtext">Xy7Elite Everflow Submissions</div>
+          <div className="admin-metric-subtext">EverTree Solutions Submissions</div>
         </div>
 
         <div className="admin-metric-card" style={{ '--accent-gradient': 'linear-gradient(135deg, #d97706, #f59e0b)' }}>
@@ -614,7 +614,7 @@ export default function AdminAffiliates({ onUpdateRefresh, onShowSnackbar }) {
             >
               <div className="admin-modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <span className="admin-header-eyebrow">EVERFLOW / XY7ELITE SIGNUP #{activeAffiliate.id}</span>
+                  <span className="admin-header-eyebrow">EVERTREE SOLUTIONS SIGNUP #{activeAffiliate.id}</span>
                   <h2>{activeAffiliate.first_name} {activeAffiliate.last_name}</h2>
                 </div>
                 <button type="button" className="admin-icon-btn" onClick={() => setActiveAffiliate(null)}>
@@ -691,7 +691,7 @@ export default function AdminAffiliates({ onUpdateRefresh, onShowSnackbar }) {
                   </h4>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', fontSize: '0.88rem' }}>
                     <div><strong>Referral Code (q):</strong> <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{activeAffiliate.referral_code || 'None'}</span></div>
-                    <div><strong>Agreed to Terms:</strong> {activeAffiliate.agreed_terms ? 'Yes (Xy7Elite Terms of Service v2026.1)' : 'No'}</div>
+                    <div><strong>Agreed to Terms:</strong> {activeAffiliate.agreed_terms ? 'Yes (EverTree Solutions Terms of Service v2026.1)' : 'No'}</div>
                     <div><strong>Applied At:</strong> {activeAffiliate.created_at}</div>
                   </div>
                 </div>

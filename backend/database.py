@@ -1458,7 +1458,7 @@ def bulk_delete_publishers(pub_ids: list):
     return count
 
 
-# ── Affiliate Signups (Everflow / Xy7Elite) ─────────────────────────
+# ── Affiliate Signups (EverTree Solutions) ─────────────────────────
 
 def create_affiliate_signup(data: dict) -> int:
     sql = """

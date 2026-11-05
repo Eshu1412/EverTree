@@ -51,7 +51,7 @@ export default function AdminDashboard({ onNavigateHome }) {
     leads: { eyebrow: 'Revenue operations', title: 'Consumer Quote Directory & Kanban' },
     buyers: { eyebrow: 'Marketplace demand', title: 'Advertiser & Buyer Marketplace Requests' },
     publishers: { eyebrow: 'Marketplace supply', title: 'Publisher & Traffic Partner Applications' },
-    affiliates: { eyebrow: 'Partner operations', title: 'Xy7Elite Affiliate Network Applications' },
+    affiliates: { eyebrow: 'Partner operations', title: 'EverTree Solutions Affiliate Network Applications' },
     staff: { eyebrow: 'Access management', title: 'Team Access & Permissions' },
     settings: { eyebrow: 'Platform administration', title: 'Platform Diagnostics & Controls' },
   };
@@ -251,7 +251,7 @@ export default function AdminDashboard({ onNavigateHome }) {
           <button
             className={`admin-nav-item ${activeTab === 'affiliates' ? 'active' : ''}`}
             onClick={() => { setActiveTab('affiliates'); setSidebarOpen(false); }}
-            title="Affiliates Hub (Everflow / Xy7Elite)"
+            title="Affiliates Hub (EverTree Solutions)"
           >
             <FiShare2 className="admin-nav-icon" style={{ color: activeTab === 'affiliates' ? '#0e7051' : 'inherit' }} />
             {!sidebarCollapsed && (
