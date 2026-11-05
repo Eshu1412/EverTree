@@ -260,10 +260,42 @@ def init_db():
             created_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
     """
+    create_affiliates_sql = """
+        CREATE TABLE IF NOT EXISTS affiliate_signups (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            referral_code TEXT DEFAULT '',
+            first_name TEXT NOT NULL,
+            last_name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT DEFAULT '',
+            legal_entity_type TEXT NOT NULL,
+            company_name TEXT NOT NULL,
+            website_url TEXT NOT NULL,
+            address TEXT NOT NULL,
+            address2 TEXT DEFAULT '',
+            country TEXT NOT NULL,
+            city TEXT NOT NULL,
+            zip_code TEXT NOT NULL,
+            payment_method TEXT NOT NULL,
+            tax_id TEXT DEFAULT '',
+            teams_user_id TEXT NOT NULL,
+            offer_types TEXT NOT NULL,
+            traffic_source TEXT NOT NULL,
+            monthly_ad_budget TEXT NOT NULL,
+            other_networks TEXT NOT NULL,
+            monthly_volume_other_networks TEXT NOT NULL,
+            advertising_methods TEXT DEFAULT '',
+            collects_trustedform_jornaya TEXT NOT NULL,
+            agreed_terms INTEGER NOT NULL DEFAULT 1,
+            status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'rejected', 'contacted')),
+            notes TEXT DEFAULT '',
+            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+    """
 
     if USE_TURSO:
         try:
-            batch_query_turso([create_users_sql, create_leads_sql, create_flight_bookings_sql, create_settings_sql, create_buyers_sql, create_publishers_sql])
+            batch_query_turso([create_users_sql, create_leads_sql, create_flight_bookings_sql, create_settings_sql, create_buyers_sql, create_publishers_sql, create_affiliates_sql])
             print(f"[DB] Turso Database connected & initialized: {TURSO_DB_URL}")
             
             # Ensure columns exist on Turso if table already existed
@@ -313,6 +345,7 @@ def init_db():
     cursor.execute(create_settings_sql)
     cursor.execute(create_buyers_sql)
     cursor.execute(create_publishers_sql)
+    cursor.execute(create_affiliates_sql)
     # Ensure columns exist on local SQLite if table was created previously
     for col in ["departure", "destination", "address", "state", "zip_code", "trusted_form_cert_url", "trusted_form_retained", "trusted_form_cert_id"]:
         try:
@@ -516,7 +549,8 @@ def get_dashboard_stats():
                 {"sql": "SELECT date(created_at) as day, COUNT(*) as count FROM leads WHERE created_at >= date('now', '-6 days') GROUP BY date(created_at) ORDER BY day ASC"},
                 {"sql": "SELECT * FROM leads ORDER BY created_at DESC LIMIT 5"},
                 {"sql": "SELECT COUNT(*) as count FROM buyers"},
-                {"sql": "SELECT COUNT(*) as count FROM publishers"}
+                {"sql": "SELECT COUNT(*) as count FROM publishers"},
+                {"sql": "SELECT COUNT(*) as count FROM affiliate_signups"}
             ])
 
             total_leads = results[0][0].get("count", 0) if results[0] else 0
@@ -538,6 +572,7 @@ def get_dashboard_stats():
 
             total_buyers = results[9][0].get("count", 0) if len(results) > 9 and results[9] else 0
             total_publishers = results[10][0].get("count", 0) if len(results) > 10 and results[10] else 0
+            total_affiliates = results[11][0].get("count", 0) if len(results) > 11 and results[11] else 0
 
             return {
                 "total_leads": total_leads,
@@ -545,6 +580,7 @@ def get_dashboard_stats():
                 "new_this_week": new_this_week,
                 "total_buyers": total_buyers,
                 "total_publishers": total_publishers,
+                "total_affiliates": total_affiliates,
                 "status_counts": status_counts,
                 "service_counts": service_counts,
                 "daily_trends": daily_trends,
@@ -611,6 +647,12 @@ def get_dashboard_stats():
     except Exception:
         total_publishers = 0
 
+    try:
+        cursor.execute("SELECT COUNT(*) FROM affiliate_signups")
+        total_affiliates = cursor.fetchone()[0]
+    except Exception:
+        total_affiliates = 0
+
     conn.close()
 
     return {
@@ -619,6 +661,7 @@ def get_dashboard_stats():
         "new_this_week": new_this_week,
         "total_buyers": total_buyers,
         "total_publishers": total_publishers,
+        "total_affiliates": total_affiliates,
         "status_counts": status_counts,
         "service_counts": service_counts,
         "daily_trends": daily_trends,
@@ -1415,6 +1458,285 @@ def bulk_delete_publishers(pub_ids: list):
     return count
 
 
+# ── Affiliate Signups (Everflow / Xy7Elite) ─────────────────────────
+
+def create_affiliate_signup(data: dict) -> int:
+    sql = """
+        INSERT INTO affiliate_signups (
+            referral_code, first_name, last_name, email, phone,
+            legal_entity_type, company_name, website_url,
+            address, address2, country, city, zip_code,
+            payment_method, tax_id, teams_user_id, offer_types,
+            traffic_source, monthly_ad_budget, other_networks,
+            monthly_volume_other_networks, advertising_methods,
+            collects_trustedform_jornaya, agreed_terms, status, notes
+        ) VALUES (
+            ?, ?, ?, ?, ?,
+            ?, ?, ?,
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?,
+            ?, ?, ?,
+            ?, ?,
+            ?, ?, ?, ?
+        )
+    """
+    params = [
+        str(data.get("referral_code", "")).strip(),
+        str(data.get("first_name", "")).strip(),
+        str(data.get("last_name", "")).strip(),
+        str(data.get("email", "")).strip(),
+        str(data.get("phone", "")).strip(),
+        str(data.get("legal_entity_type", "")).strip(),
+        str(data.get("company_name", "")).strip(),
+        str(data.get("website_url", "")).strip(),
+        str(data.get("address", "")).strip(),
+        str(data.get("address2", "")).strip(),
+        str(data.get("country", "")).strip(),
+        str(data.get("city", "")).strip(),
+        str(data.get("zip_code", "")).strip(),
+        str(data.get("payment_method", "")).strip(),
+        str(data.get("tax_id", "")).strip(),
+        str(data.get("teams_user_id", "")).strip(),
+        str(data.get("offer_types", "")).strip(),
+        str(data.get("traffic_source", "")).strip(),
+        str(data.get("monthly_ad_budget", "")).strip(),
+        str(data.get("other_networks", "")).strip(),
+        str(data.get("monthly_volume_other_networks", "")).strip(),
+        str(data.get("advertising_methods", "")).strip(),
+        str(data.get("collects_trustedform_jornaya", "")).strip(),
+        1 if data.get("agreed_terms") in (True, 1, "1", "true", "True") else 0,
+        str(data.get("status", "pending")),
+        str(data.get("notes", ""))
+    ]
+
+    if USE_TURSO:
+        try:
+            _, _, last_id = query_turso(sql, params)
+            return last_id or 1
+        except Exception as e:
+            print(f"[DB] Turso create_affiliate_signup fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    aff_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return aff_id
+
+
+def get_affiliate_signups(
+    search: str = "",
+    status: str = "",
+    page: int = 1,
+    per_page: int = 20,
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    conditions = []
+    params = []
+
+    if search:
+        conditions.append(
+            "(first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR company_name LIKE ? OR phone LIKE ? OR teams_user_id LIKE ? OR referral_code LIKE ?)"
+        )
+        s = f"%{search}%"
+        params.extend([s, s, s, s, s, s, s])
+
+    if status and status != "all":
+        conditions.append("status = ?")
+        params.append(status)
+
+    where_clause = ""
+    if conditions:
+        where_clause = "WHERE " + " AND ".join(conditions)
+
+    allowed_sort = {
+        "id": "id",
+        "created_at": "created_at",
+        "first_name": "first_name",
+        "last_name": "last_name",
+        "company_name": "company_name",
+        "email": "email",
+        "status": "status",
+        "referral_code": "referral_code"
+    }
+    col = allowed_sort.get(sort_by, "created_at")
+    order = "ASC" if sort_order.lower() == "asc" else "DESC"
+
+    count_sql = f"SELECT COUNT(*) as count FROM affiliate_signups {where_clause}"
+
+    if per_page and per_page > 0:
+        offset = (page - 1) * per_page
+        query_sql = f"SELECT * FROM affiliate_signups {where_clause} ORDER BY {col} {order} LIMIT ? OFFSET ?"
+        query_params = list(params) + [per_page, offset]
+    else:
+        query_sql = f"SELECT * FROM affiliate_signups {where_clause} ORDER BY {col} {order}"
+        query_params = list(params)
+
+    if USE_TURSO:
+        try:
+            c_rows, _, _ = query_turso(count_sql, params)
+            total = c_rows[0].get("count", 0) if c_rows else 0
+            rows, _, _ = query_turso(query_sql, query_params)
+            total_pages = max(1, (total + per_page - 1) // per_page) if per_page > 0 else 1
+            return {
+                "affiliates": rows,
+                "total": total,
+                "page": page,
+                "per_page": per_page,
+                "total_pages": total_pages
+            }
+        except Exception as e:
+            print(f"[DB] Turso get_affiliate_signups fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(count_sql, params)
+    total = cursor.fetchone()[0]
+
+    cursor.execute(query_sql, query_params)
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+
+    total_pages = max(1, (total + per_page - 1) // per_page) if per_page > 0 else 1
+    return {
+        "affiliates": rows,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": total_pages
+    }
+
+
+def get_affiliate_signup_by_id(signup_id: int):
+    sql = "SELECT * FROM affiliate_signups WHERE id = ?"
+    if USE_TURSO:
+        try:
+            rows, _, _ = query_turso(sql, [signup_id])
+            return rows[0] if rows else None
+        except Exception as e:
+            print(f"[DB] Turso get_affiliate_signup_by_id fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, (signup_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_affiliate_signup(signup_id: int, data: dict) -> bool:
+    fields = []
+    params = []
+    allowed = [
+        "first_name", "last_name", "company_name", "email", "phone",
+        "legal_entity_type", "website_url", "address", "address2",
+        "country", "city", "zip_code", "payment_method", "tax_id",
+        "teams_user_id", "offer_types", "traffic_source",
+        "monthly_ad_budget", "other_networks", "monthly_volume_other_networks",
+        "advertising_methods", "collects_trustedform_jornaya",
+        "status", "notes"
+    ]
+    for key in allowed:
+        if key in data:
+            fields.append(f"{key} = ?")
+            params.append(data[key])
+
+    if not fields:
+        return False
+
+    params.append(signup_id)
+    sql = f"UPDATE affiliate_signups SET {', '.join(fields)} WHERE id = ?"
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, params)
+            return affected > 0
+        except Exception as e:
+            print(f"[DB] Turso update_affiliate_signup fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    conn.commit()
+    affected = cursor.rowcount
+    conn.close()
+    return affected > 0
+
+
+def delete_affiliate_signup(signup_id: int) -> bool:
+    sql = "DELETE FROM affiliate_signups WHERE id = ?"
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, [signup_id])
+            return affected > 0
+        except Exception as e:
+            print(f"[DB] Turso delete_affiliate_signup fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, (signup_id,))
+    conn.commit()
+    affected = cursor.rowcount
+    conn.close()
+    return affected > 0
+
+
+def bulk_update_affiliate_status(signup_ids: list, status: str) -> int:
+    if not signup_ids:
+        return 0
+    placeholders = ",".join(["?"] * len(signup_ids))
+    sql = f"UPDATE affiliate_signups SET status = ? WHERE id IN ({placeholders})"
+    params = [status] + signup_ids
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, params)
+            return affected
+        except Exception as e:
+            print(f"[DB] Turso bulk_update_affiliate_status fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, params)
+    conn.commit()
+    count = cursor.rowcount
+    conn.close()
+    return count
+
+
+def bulk_delete_affiliates(signup_ids: list) -> int:
+    if not signup_ids:
+        return 0
+    placeholders = ",".join(["?"] * len(signup_ids))
+    sql = f"DELETE FROM affiliate_signups WHERE id IN ({placeholders})"
+
+    if USE_TURSO:
+        try:
+            _, affected, _ = query_turso(sql, signup_ids)
+            return affected
+        except Exception as e:
+            print(f"[DB] Turso bulk_delete_affiliates fallback ({e})")
+
+    conn = get_local_db()
+    cursor = conn.cursor()
+    cursor.execute(sql, signup_ids)
+    conn.commit()
+    count = cursor.rowcount
+    conn.close()
+    return count
+
+
+def get_affiliate_form_blocked() -> bool:
+    val = get_app_setting("affiliate_form_blocked", "false")
+    return str(val).strip().lower() in ("true", "1", "yes")
+
+
+def set_affiliate_form_blocked(blocked: bool) -> bool:
+    return set_app_setting("affiliate_form_blocked", "true" if blocked else "false")
+
+
 # ── User Management ───────────────────────────────────
 
 def get_user_by_username(username: str):
@@ -1696,6 +2018,7 @@ DEFAULT_CONTACT_CONFIG = {
 }
 
 _settings_table_ensured = False
+_settings_cache = {}
 
 def _ensure_settings_table():
     global _settings_table_ensured
@@ -1719,33 +2042,47 @@ def _ensure_settings_table():
 
 
 def get_app_setting(key: str, default=None):
-    """Retrieve an application setting by key from Turso or local SQLite."""
+    """Retrieve an application setting by key from Turso or local SQLite with caching."""
+    import time
+    now = time.time()
+    if key in _settings_cache:
+        cached_val, cached_time = _settings_cache[key]
+        if now - cached_time < 10.0:
+            return cached_val
+
     _ensure_settings_table()
+    val = default
+    found = False
     if USE_TURSO:
         try:
             rows, _, _ = query_turso("SELECT value FROM app_settings WHERE key = ?", [key])
             if rows and len(rows) > 0:
-                return rows[0].get("value", default)
-            return default
+                val = rows[0].get("value", default)
+                found = True
         except Exception as e:
             print(f"[DB] Turso get_app_setting fallback ({e})")
     
-    try:
-        conn = get_local_db()
-        cursor = conn.cursor()
-        cursor.execute("SELECT value FROM app_settings WHERE key = ?", (key,))
-        row = cursor.fetchone()
-        conn.close()
-        if row:
-            return row[0]
-    except Exception as e:
-        print(f"[DB] Local get_app_setting error ({e})")
-    return default
+    if not found:
+        try:
+            conn = get_local_db()
+            cursor = conn.cursor()
+            cursor.execute("SELECT value FROM app_settings WHERE key = ?", (key,))
+            row = cursor.fetchone()
+            conn.close()
+            if row:
+                val = row[0]
+        except Exception as e:
+            print(f"[DB] Local get_app_setting error ({e})")
+
+    _settings_cache[key] = (val, now)
+    return val
 
 def set_app_setting(key: str, value: str):
-    """Persist an application setting key-value pair."""
+    """Persist an application setting key-value pair and update cache."""
+    import time
     _ensure_settings_table()
     now_iso = datetime.utcnow().isoformat()
+    _settings_cache[key] = (value, time.time())
     if USE_TURSO:
         try:
             query_turso(

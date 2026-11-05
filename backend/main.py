@@ -1,10 +1,15 @@
+import re
+
+EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+ZIP_REGEX = re.compile(r"^\d{5}(-\d{4})?$")
+
 import os
 from pathlib import Path
 import httpx
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
-from typing import Optional, Dict
+from typing import Optional, Dict, List, Union
 import csv
 import io
 from datetime import datetime
@@ -38,7 +43,14 @@ def startup_event():
 # CORS for React dev server
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://evertreesolutions.com",
+        "https://www.evertreesolutions.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -281,6 +293,64 @@ class PublisherUpdateRequest(BaseModel):
     notes: Optional[str] = None
 
 
+class AffiliateSignupRequest(BaseModel):
+    referral_code: Optional[str] = ""
+    first_name: str
+    last_name: str
+    email: str
+    phone: Optional[str] = ""
+    legal_entity_type: str
+    company_name: str
+    website_url: str
+    address: str
+    address2: Optional[str] = ""
+    country: str
+    city: str
+    zip_code: str
+    payment_method: str
+    tax_id: Optional[str] = ""
+    teams_user_id: str
+    offer_types: Union[str, List[str]]
+    traffic_source: str
+    monthly_ad_budget: str
+    other_networks: str
+    monthly_volume_other_networks: str
+    advertising_methods: Optional[str] = ""
+    collects_trustedform_jornaya: str
+    agreed_terms: bool
+
+
+class AffiliateUpdateRequest(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    company_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    legal_entity_type: Optional[str] = None
+    website_url: Optional[str] = None
+    address: Optional[str] = None
+    address2: Optional[str] = None
+    country: Optional[str] = None
+    city: Optional[str] = None
+    zip_code: Optional[str] = None
+    payment_method: Optional[str] = None
+    tax_id: Optional[str] = None
+    teams_user_id: Optional[str] = None
+    offer_types: Optional[str] = None
+    traffic_source: Optional[str] = None
+    monthly_ad_budget: Optional[str] = None
+    other_networks: Optional[str] = None
+    monthly_volume_other_networks: Optional[str] = None
+    advertising_methods: Optional[str] = None
+    collects_trustedform_jornaya: Optional[str] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class AffiliateFormToggleRequest(BaseModel):
+    blocked: bool
+
+
 # ── Data ────────────────────────────────────────────────
 SERVICES = [
     {
@@ -447,6 +517,28 @@ async def get_faqs():
 
 @app.post("/api/quote-request")
 async def submit_quote_request(request: QuoteRequest):
+    # Strict input validation
+    full_name = (request.full_name or "").strip()
+    if len(full_name) < 2:
+        raise HTTPException(status_code=400, detail="Please enter your full name (at least 2 characters).")
+
+    email = (request.email or "").strip().lower()
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(status_code=400, detail="Please enter a valid email address.")
+
+    phone = (request.phone or "").strip()
+    clean_digits = "".join(filter(str.isdigit, phone))
+    if len(clean_digits) < 10:
+        raise HTTPException(status_code=400, detail="Please enter a valid 10-digit phone number.")
+
+    zip_code = (request.zip_code or "").strip()
+    if not ZIP_REGEX.match(zip_code):
+        raise HTTPException(status_code=400, detail="Please enter a valid 5-digit US ZIP code.")
+
+    service_type = (request.service_type or "").strip()
+    if not service_type:
+        raise HTTPException(status_code=400, detail="Please select a valid service.")
+
     # Split full name into first and last name for database storage
     name_parts = request.full_name.strip().split(" ", 1)
     first_name = name_parts[0]
@@ -580,7 +672,6 @@ async def get_trustedform_status():
         "configured": bool(api_key),
         "authenticated": auth_valid,
         "masked_key": masked_key,
-        "api_key": api_key,
         "details": details
     }
 
@@ -933,12 +1024,22 @@ async def import_backup(backup_data: dict):
 
 @app.post("/api/buyers/register")
 async def register_buyer(req: BuyerCreateRequest):
-    if not req.full_name.strip():
-        raise HTTPException(status_code=400, detail="Full Name is required")
-    if not req.email.strip():
-        raise HTTPException(status_code=400, detail="Work Email is required")
-    if not req.phone.strip():
-        raise HTTPException(status_code=400, detail="Phone Number is required")
+    full_name = (req.full_name or "").strip()
+    if len(full_name) < 2:
+        raise HTTPException(status_code=400, detail="Full Name is required (at least 2 characters).")
+
+    company = (req.company or "").strip()
+    if len(company) < 2:
+        raise HTTPException(status_code=400, detail="Company Name is required.")
+
+    email = (req.email or "").strip().lower()
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(status_code=400, detail="Please provide a valid work email address.")
+
+    phone = (req.phone or "").strip()
+    clean_digits = "".join(filter(str.isdigit, phone))
+    if len(clean_digits) < 10:
+        raise HTTPException(status_code=400, detail="Please provide a valid 10-digit contact phone number.")
 
     buyer_id = database.create_buyer({
         "full_name": req.full_name.strip(),
@@ -1074,12 +1175,22 @@ async def bulk_delete_buyers_records(req: BulkDeleteRequest):
 
 @app.post("/api/publishers/register")
 async def register_publisher(req: PublisherCreateRequest):
-    if not req.full_name.strip():
-        raise HTTPException(status_code=400, detail="Full Name is required")
-    if not req.email.strip():
-        raise HTTPException(status_code=400, detail="Work Email is required")
-    if not req.phone.strip():
-        raise HTTPException(status_code=400, detail="Phone Number is required")
+    full_name = (req.full_name or "").strip()
+    if len(full_name) < 2:
+        raise HTTPException(status_code=400, detail="Full Name is required (at least 2 characters).")
+
+    company = (req.company or "").strip()
+    if len(company) < 2:
+        raise HTTPException(status_code=400, detail="Company Name is required.")
+
+    email = (req.email or "").strip().lower()
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(status_code=400, detail="Please provide a valid business email address.")
+
+    phone = (req.phone or "").strip()
+    clean_digits = "".join(filter(str.isdigit, phone))
+    if len(clean_digits) < 10:
+        raise HTTPException(status_code=400, detail="Please provide a valid 10-digit contact phone number.")
 
     pub_id = database.create_publisher({
         "full_name": req.full_name.strip(),
@@ -1211,6 +1322,245 @@ async def bulk_update_publishers_status(req: BulkStatusRequest):
 async def bulk_delete_publishers_records(req: BulkDeleteRequest):
     count = database.bulk_delete_publishers(req.lead_ids)
     return {"success": True, "deleted_count": count, "message": f"Deleted {count} publishers"}
+
+
+# ── Affiliate Signups API (Everflow / Xy7Elite) ─────────
+
+@app.get("/api/affiliates/status")
+async def get_affiliate_form_status():
+    """Public endpoint to check whether affiliate application route is currently blocked or open."""
+    return {"blocked": database.get_affiliate_form_blocked()}
+
+
+@app.post("/api/affiliates/signup")
+async def submit_affiliate_signup(req: AffiliateSignupRequest):
+    """
+    Public endpoint for affiliate signup applications.
+    Honors admin route block status.
+    """
+    if database.get_affiliate_form_blocked():
+        raise HTTPException(status_code=403, detail="Affiliate applications are currently closed.")
+
+    # Validation
+    if not req.first_name.strip() or not req.last_name.strip():
+        raise HTTPException(status_code=400, detail="First and last name are required.")
+    
+    clean_email = req.email.strip().lower()
+    if not EMAIL_REGEX.match(clean_email):
+        raise HTTPException(status_code=400, detail="Please enter a valid email address.")
+
+    if not req.company_name.strip():
+        raise HTTPException(status_code=400, detail="Company/Business name is required.")
+
+    if not req.website_url.strip():
+        raise HTTPException(status_code=400, detail="Website or social media URL is required.")
+
+    if not req.address.strip() or not req.city.strip() or not req.country.strip() or not req.zip_code.strip():
+        raise HTTPException(status_code=400, detail="Complete address information (street, city, country, postal code) is required.")
+
+    if not req.teams_user_id.strip():
+        raise HTTPException(status_code=400, detail="Teams User ID is required.")
+
+    if not req.agreed_terms:
+        raise HTTPException(status_code=400, detail="You must agree to the Terms of Service to apply.")
+
+    # Format offer_types
+    if isinstance(req.offer_types, list):
+        offer_types_str = ", ".join(t.strip() for t in req.offer_types if t.strip())
+    else:
+        offer_types_str = str(req.offer_types).strip()
+
+    if not offer_types_str:
+        raise HTTPException(status_code=400, detail="Please select at least one offer type.")
+
+    data = {
+        "referral_code": req.referral_code or "",
+        "first_name": req.first_name,
+        "last_name": req.last_name,
+        "email": clean_email,
+        "phone": req.phone or "",
+        "legal_entity_type": req.legal_entity_type,
+        "company_name": req.company_name,
+        "website_url": req.website_url,
+        "address": req.address,
+        "address2": req.address2 or "",
+        "country": req.country,
+        "city": req.city,
+        "zip_code": req.zip_code,
+        "payment_method": req.payment_method,
+        "tax_id": req.tax_id or "",
+        "teams_user_id": req.teams_user_id,
+        "offer_types": offer_types_str,
+        "traffic_source": req.traffic_source,
+        "monthly_ad_budget": req.monthly_ad_budget,
+        "other_networks": req.other_networks,
+        "monthly_volume_other_networks": req.monthly_volume_other_networks,
+        "advertising_methods": req.advertising_methods or "",
+        "collects_trustedform_jornaya": req.collects_trustedform_jornaya,
+        "agreed_terms": 1,
+        "status": "pending",
+        "notes": ""
+    }
+
+    aff_id = database.create_affiliate_signup(data)
+    return {
+        "success": True,
+        "id": aff_id,
+        "message": f"Thank you, {req.first_name}! Your affiliate application for Xy7Elite has been successfully submitted."
+    }
+
+
+@app.get("/api/admin/affiliates")
+async def list_admin_affiliates(
+    search: str = "",
+    status: str = "",
+    page: int = 1,
+    per_page: int = 20,
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    result = database.get_affiliate_signups(
+        search=search,
+        status=status,
+        page=page,
+        per_page=per_page,
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
+    result["form_blocked"] = database.get_affiliate_form_blocked()
+    return result
+
+
+@app.get("/api/admin/affiliates/export-csv")
+async def export_affiliates_csv(
+    search: str = "",
+    status: str = "",
+    sort_by: str = "created_at",
+    sort_order: str = "desc"
+):
+    result = database.get_affiliate_signups(
+        search=search,
+        status=status,
+        page=1,
+        per_page=0,
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
+    affiliates_list = result.get("affiliates", [])
+
+    output = io.StringIO()
+    output.write('\ufeff')
+    writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
+    writer.writerow([
+        "ID", "Referral Code", "First Name", "Last Name", "Email", "Phone",
+        "Legal Entity Type", "Company Name", "Website / Social Media",
+        "Address", "Address Line 2", "Country", "City", "ZIP Code",
+        "Payment Method", "Tax ID / SSN", "Teams User ID", "Offer Types",
+        "Primary Traffic Source", "Monthly Ad Budget", "Other Networks",
+        "Monthly Volume Other Networks", "Advertising Methods",
+        "Collects TrustedForm / Jornaya", "Agreed Terms", "Status", "Notes", "Created At"
+    ])
+
+    for a in affiliates_list:
+        writer.writerow([
+            a.get("id", ""),
+            a.get("referral_code", ""),
+            a.get("first_name", ""),
+            a.get("last_name", ""),
+            a.get("email", ""),
+            a.get("phone", ""),
+            a.get("legal_entity_type", ""),
+            a.get("company_name", ""),
+            a.get("website_url", ""),
+            a.get("address", ""),
+            a.get("address2", ""),
+            a.get("country", ""),
+            a.get("city", ""),
+            a.get("zip_code", ""),
+            a.get("payment_method", ""),
+            a.get("tax_id", ""),
+            a.get("teams_user_id", ""),
+            a.get("offer_types", ""),
+            a.get("traffic_source", ""),
+            a.get("monthly_ad_budget", ""),
+            a.get("other_networks", ""),
+            a.get("monthly_volume_other_networks", ""),
+            a.get("advertising_methods", ""),
+            a.get("collects_trustedform_jornaya", ""),
+            "Yes" if a.get("agreed_terms") in (1, "1", True) else "No",
+            a.get("status", ""),
+            a.get("notes", ""),
+            a.get("created_at", "")
+        ])
+
+    csv_data = output.getvalue()
+    timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return Response(
+        content=csv_data,
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="evertree_affiliates_{timestamp_str}.csv"'
+        }
+    )
+
+
+@app.get("/api/admin/affiliates/{signup_id}")
+async def get_affiliate_record(signup_id: int):
+    record = database.get_affiliate_signup_by_id(signup_id)
+    if not record:
+        raise HTTPException(status_code=404, detail="Affiliate application not found")
+    return record
+
+
+@app.put("/api/admin/affiliates/{signup_id}")
+async def update_affiliate_record(signup_id: int, req: AffiliateUpdateRequest):
+    data = req.dict(exclude_unset=True)
+    if not data:
+        raise HTTPException(status_code=400, detail="No fields provided for update")
+    success = database.update_affiliate_signup(signup_id, data)
+    if not success:
+        raise HTTPException(status_code=400, detail="Failed to update affiliate record")
+    return {
+        "success": True,
+        "message": "Affiliate application updated successfully",
+        "affiliate": database.get_affiliate_signup_by_id(signup_id)
+    }
+
+
+@app.delete("/api/admin/affiliates/{signup_id}")
+async def delete_affiliate_record(signup_id: int):
+    success = database.delete_affiliate_signup(signup_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Affiliate record not found")
+    return {"success": True, "message": "Affiliate record deleted successfully"}
+
+
+@app.post("/api/admin/affiliates/bulk-status")
+async def bulk_update_affiliates_status(req: BulkStatusRequest):
+    count = database.bulk_update_affiliate_status(req.lead_ids, req.status)
+    return {"success": True, "updated_count": count, "message": f"Updated {count} affiliates to {req.status}"}
+
+
+@app.post("/api/admin/affiliates/bulk-delete")
+async def bulk_delete_affiliates_records(req: BulkDeleteRequest):
+    count = database.bulk_delete_affiliates(req.lead_ids)
+    return {"success": True, "deleted_count": count, "message": f"Deleted {count} affiliates"}
+
+
+@app.get("/api/admin/settings/affiliate-form")
+async def get_admin_affiliate_form_settings():
+    return {"blocked": database.get_affiliate_form_blocked()}
+
+
+@app.post("/api/admin/settings/affiliate-form")
+async def update_admin_affiliate_form_settings(req: AffiliateFormToggleRequest):
+    success = database.set_affiliate_form_blocked(req.blocked)
+    status_label = "blocked (signups closed)" if req.blocked else "unblocked (signups active)"
+    return {
+        "success": success,
+        "blocked": req.blocked,
+        "message": f"Affiliate signup form route is now {status_label}."
+    }
 
 
 # ── Contact Us & Form Redirect Configuration API ────────

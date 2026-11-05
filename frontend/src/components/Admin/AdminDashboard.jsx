@@ -4,7 +4,7 @@ import {
   FiPieChart, FiUsers, FiShield, FiLogOut, FiRefreshCw, 
   FiHome, FiGrid, FiSun, FiMoon, FiSettings, 
   FiChevronLeft, FiChevronRight, FiMaximize2, FiBell, FiMenu, FiX,
-  FiShoppingBag, FiRadio
+  FiShoppingBag, FiRadio, FiShare2
 } from 'react-icons/fi';
 
 import AdminLogin from './AdminLogin';
@@ -12,6 +12,7 @@ import AdminOverview from './AdminOverview';
 import AdminLeads from './AdminLeads';
 import AdminBuyers from './AdminBuyers';
 import AdminPublishers from './AdminPublishers';
+import AdminAffiliates from './AdminAffiliates';
 import AdminStaff from './AdminStaff';
 import AdminSettings from './AdminSettings';
 import AdminSnackbar from './AdminSnackbar';
@@ -20,8 +21,17 @@ import './AdminDashboard.css';
 
 export default function AdminDashboard({ onNavigateHome }) {
   const [user, setUser] = useState(null);
-  // 'overview' | 'leads' | 'buyers' | 'publishers' | 'staff' | 'settings'
-  const [activeTab, setActiveTab] = useState('overview');
+  // 'overview' | 'leads' | 'buyers' | 'publishers' | 'affiliates' | 'staff' | 'settings'
+  const [activeTab, setActiveTab] = useState(() => {
+    const hash = (window.location.hash || '').toLowerCase();
+    if (hash.includes('affiliate')) return 'affiliates';
+    if (hash.includes('buyer')) return 'buyers';
+    if (hash.includes('publisher')) return 'publishers';
+    if (hash.includes('lead')) return 'leads';
+    if (hash.includes('staff')) return 'staff';
+    if (hash.includes('setting')) return 'settings';
+    return 'overview';
+  });
   const [stats, setStats] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -41,6 +51,7 @@ export default function AdminDashboard({ onNavigateHome }) {
     leads: { eyebrow: 'Revenue operations', title: 'Consumer Quote Directory & Kanban' },
     buyers: { eyebrow: 'Marketplace demand', title: 'Advertiser & Buyer Marketplace Requests' },
     publishers: { eyebrow: 'Marketplace supply', title: 'Publisher & Traffic Partner Applications' },
+    affiliates: { eyebrow: 'Partner operations', title: 'Xy7Elite Affiliate Network Applications' },
     staff: { eyebrow: 'Access management', title: 'Team Access & Permissions' },
     settings: { eyebrow: 'Platform administration', title: 'Platform Diagnostics & Controls' },
   };
@@ -237,6 +248,20 @@ export default function AdminDashboard({ onNavigateHome }) {
             )}
           </button>
 
+          <button
+            className={`admin-nav-item ${activeTab === 'affiliates' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('affiliates'); setSidebarOpen(false); }}
+            title="Affiliates Hub (Everflow / Xy7Elite)"
+          >
+            <FiShare2 className="admin-nav-icon" style={{ color: activeTab === 'affiliates' ? '#0e7051' : 'inherit' }} />
+            {!sidebarCollapsed && (
+              <>
+                <span>Affiliates Hub</span>
+                {stats?.total_affiliates ? <span className="admin-nav-badge" style={{ background: '#0e7051' }}>{stats.total_affiliates}</span> : null}
+              </>
+            )}
+          </button>
+
           {!sidebarCollapsed && <span className="admin-nav-section-label" style={{ marginTop: '0.6rem' }}>Administration</span>}
 
           <button
@@ -376,6 +401,14 @@ export default function AdminDashboard({ onNavigateHome }) {
             {activeTab === 'publishers' && (
               <AdminPublishers
                 key="publishers"
+                onUpdateRefresh={fetchStats}
+                onShowSnackbar={showSnackbar}
+              />
+            )}
+
+            {activeTab === 'affiliates' && (
+              <AdminAffiliates
+                key="affiliates"
                 onUpdateRefresh={fetchStats}
                 onShowSnackbar={showSnackbar}
               />

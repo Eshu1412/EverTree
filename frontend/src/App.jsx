@@ -7,6 +7,7 @@ import SubVerticalView from './components/SubVerticalView'
 import ThankYouView from './components/ThankYouView'
 import TravelServicesView from './components/Travel/TravelServicesView'
 import AdminDashboard from './components/Admin/AdminDashboard'
+import AffiliateSignup from './components/AffiliateSignup/AffiliateSignup'
 import ContactRedirectModal from './components/ContactRedirectModal'
 import { DEFAULT_CONTACT_CONFIG, getServicePhone } from './utils/serviceContact'
 
@@ -254,15 +255,56 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [viewState]);
   const [contactConfig, setContactConfig] = useState(() => { try { const cached = localStorage.getItem('contact_config'); return cached ? JSON.parse(cached) : DEFAULT_CONTACT_CONFIG } catch { return DEFAULT_CONTACT_CONFIG } })
-  useEffect(() => { const checkHash = () => { if (window.location.hash === '#admin' || window.location.pathname === '/admin') { setViewState('admin'); document.title = 'EverTree | Admin Portal' } }; checkHash(); window.addEventListener('hashchange', checkHash); return () => window.removeEventListener('hashchange', checkHash) }, [])
+  useEffect(() => {
+    const checkHash = () => {
+      const path = (window.location.pathname || '').toLowerCase();
+      const hash = (window.location.hash || '').toLowerCase();
+      if (hash === '#admin' || hash.startsWith('#admin') || path === '/admin' || path.startsWith('/admin')) {
+        setViewState('admin');
+        document.title = 'EverTree | Admin Portal';
+      } else if (
+        path === '/affiliate/signup' ||
+        path.startsWith('/affiliate/signup') ||
+        path === '/affiliate-signup' ||
+        path.startsWith('/affiliate-signup') ||
+        hash === '#affiliate/signup' ||
+        hash.startsWith('#affiliate/signup') ||
+        hash === '#affiliate-signup' ||
+        hash.startsWith('#affiliate-signup')
+      ) {
+        setViewState('affiliate-signup');
+        document.title = 'EverTree | Affiliate Network Application';
+      }
+    };
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    window.addEventListener('popstate', checkHash);
+    return () => {
+      window.removeEventListener('hashchange', checkHash);
+      window.removeEventListener('popstate', checkHash);
+    };
+  }, []);
   useEffect(() => { fetch('/api/settings/contact').then((res) => res.ok ? res.json() : null).then((data) => { if (data) { setContactConfig(data); localStorage.setItem('contact_config', JSON.stringify(data)) } }).catch(() => {}) }, [])
-  const navigateHome = () => { if (window.location.hash === '#admin') window.history.pushState(null, '', window.location.pathname); setViewState('home'); setActiveVertical(''); setActiveSub(''); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const navigateHome = () => {
+    if (window.location.hash === '#admin' || window.location.hash.includes('affiliate')) {
+      window.history.pushState(null, '', window.location.pathname);
+    }
+    if (window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+    }
+    setViewState('home');
+    setActiveVertical('');
+    setActiveSub('');
+    document.title = 'EverTree Solutions';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const navigateSection = (event, id) => { event.preventDefault(); setViewState('home'); setActiveVertical(''); setActiveSub(''); window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50) }
   const navigateVertical = (verticalId) => { setActiveVertical(verticalId); setViewState('vertical'); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const navigateSubVertical = (verticalId, subId) => { setActiveVertical(verticalId); setActiveSub(subId); setViewState('sub-vertical'); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const openQuote = (service = '') => { setSelectedService(service); setQuoteOpen(true) }
   const onFormSubmitted = (lead) => { setSubmittedLead(lead); setQuoteOpen(false); setViewState('thank-you'); const phone = getServicePhone(lead?.service, lead?.category, contactConfig); if (contactConfig?.enabled !== false && phone?.trim()) { setActiveServicePhone(phone.trim()); setShowContactModal(true) }; window.scrollTo({ top: 0, behavior: 'smooth' }) }
   if (viewState === 'admin') return <AdminDashboard onNavigateHome={navigateHome} />
+  if (viewState === 'affiliate-signup') return <AffiliateSignup onNavigateHome={navigateHome} />
   return <><Navbar onQuoteClick={() => openQuote('')} onNavigateHome={navigateHome} onNavigateSection={navigateSection} menuOpen={mobileMenuOpen} setMenuOpen={setMobileMenuOpen} /><main className="app-main"><AnimatePresence mode="wait">{viewState === 'home' && <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><Home onNavigateVertical={navigateVertical} onOpenQuote={openQuote} onFormSubmitted={onFormSubmitted} /></motion.div>}{viewState === 'vertical' && <motion.div key={`vertical-${activeVertical}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{activeVertical === 'travel' ? <TravelServicesView onNavigateHome={navigateHome} onFormSubmitted={onFormSubmitted} /> : <CategoryView verticalId={activeVertical} onNavigateHome={navigateHome} onSelectSubVertical={navigateSubVertical} />}</motion.div>}{viewState === 'sub-vertical' && <motion.div key={`sub-${activeVertical}-${activeSub}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><SubVerticalView verticalId={activeVertical} subId={activeSub} onNavigateHome={navigateHome} onNavigateVertical={navigateVertical} onFormSubmitted={onFormSubmitted} /></motion.div>}{viewState === 'thank-you' && <ThankYouView leadData={submittedLead} onNavigateHome={navigateHome} />}</AnimatePresence></main><Footer onNavigateHome={navigateHome} onOpenQuote={openQuote} /><QuoteForm isOpen={quoteOpen} onClose={() => setQuoteOpen(false)} defaultService={selectedService} onNavigateVertical={navigateVertical} onFormSubmitted={onFormSubmitted} /><ContactRedirectModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} config={contactConfig} leadData={submittedLead} overridePhone={activeServicePhone} />
     <AnimatePresence>
       {showFloatingPill && !quoteOpen && !mobileMenuOpen && (
