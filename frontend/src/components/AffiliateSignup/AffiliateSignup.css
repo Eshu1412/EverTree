@@ -102,11 +102,40 @@
   padding: 0.45rem 0.9rem;
   cursor: pointer;
   transition: all 0.18s ease;
+  white-space: nowrap;
 }
 
 .affiliate-nav__return:hover {
   background: rgba(45, 58, 46, 0.05);
   border-color: rgba(45, 58, 46, 0.3);
+}
+
+.return-text-mobile {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .affiliate-nav__inner {
+    padding: 0.75rem 1rem;
+  }
+  .affiliate-nav__network,
+  .affiliate-nav__sep {
+    display: none;
+  }
+  .return-text-desktop {
+    display: none;
+  }
+  .return-text-mobile {
+    display: inline;
+  }
+  .affiliate-nav__actions {
+    gap: 0.5rem;
+  }
+  .referral-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+  }
 }
 
 /* Main Container */

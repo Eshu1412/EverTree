@@ -1,8 +1,8 @@
-# robots.txt for EverTree Solutions (https://evertreesolutions.com)
+# robots.txt for EverTree Solutions (https://evertreesolutions.in)
 User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
 Disallow: /dist/
 
-Sitemap: https://evertreesolutions.com/sitemap.xml
+Sitemap: https://evertreesolutions.in/sitemap.xml

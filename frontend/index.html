@@ -3,11 +3,15 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="any" />
+  <link rel="shortcut icon" href="/favicon.ico" />
   <link rel="icon" type="image/svg+xml" href="/evertree-symbol.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="/logos/1-Symbol-Only/evertree-symbol-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/logos/1-Symbol-Only/evertree-symbol-16x16.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -19,15 +23,16 @@
   <meta name="author" content="EverTree Solutions" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="theme-color" content="#03363A" />
-  <link rel="canonical" href="https://evertreesolutions.com/" />
+  <link rel="canonical" href="https://evertreesolutions.in/" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://evertreesolutions.com/" />
+  <meta property="og:url" content="https://evertreesolutions.in/" />
   <meta property="og:site_name" content="EverTree Solutions" />
   <meta property="og:title" content="EverTree Solutions | Leads and Quotes That Grow With You" />
   <meta property="og:description" content="Compare verified quotes from top-rated providers across all 50 states. 100% free, fast matching, and zero obligations." />
-  <meta property="og:image" content="https://evertreesolutions.com/og-social-share-1200x630.png" />
+  <meta property="og:image" content="https://evertreesolutions.in/og-social-share-1200x630.png" />
+  <meta property="og:image:secure_url" content="https://evertreesolutions.in/og-social-share-1200x630.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="EverTree Solutions Logo" />
@@ -35,28 +40,35 @@
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://evertreesolutions.com/" />
+  <meta name="twitter:url" content="https://evertreesolutions.in/" />
   <meta name="twitter:title" content="EverTree Solutions | Leads and Quotes That Grow With You" />
   <meta name="twitter:description" content="Compare verified quotes for insurance, home improvement, debt relief, legal services, and flights from trusted nationwide professionals." />
-  <meta name="twitter:image" content="https://evertreesolutions.com/og-social-share-1200x630.png" />
+  <meta name="twitter:image" content="https://evertreesolutions.in/og-social-share-1200x630.png" />
 
   <!-- Fonts & Preconnects -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Oswald:wght@500&family=Montserrat:wght@700&family=Roboto+Slab:wght@600&family=Raleway:wght@700&display=swap" rel="stylesheet" />
 
-  <!-- Structured Data: Organization & WebSite Schema -->
+  <!-- Structured Data: Organization & WebSite Schema for Google Search Logo & Knowledge Graph -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://evertreesolutions.com/#organization",
+        "@id": "https://evertreesolutions.in/#organization",
         "name": "EverTree Solutions",
-        "url": "https://evertreesolutions.com/",
-        "logo": "https://evertreesolutions.com/evertree-logo.svg",
-        "image": "https://evertreesolutions.com/og-social-share-1200x630.png",
+        "alternateName": "EverTree",
+        "url": "https://evertreesolutions.in/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://evertreesolutions.in/favicon-512x512.png",
+          "caption": "EverTree Solutions Logo",
+          "width": 512,
+          "height": 512
+        },
+        "image": "https://evertreesolutions.in/og-social-share-1200x630.png",
         "description": "EverTree Solutions is a nationwide quote comparison and lead-matching platform helping consumers connect with vetted professionals for insurance, home improvement, debt relief, legal services, and flights.",
         "contactPoint": {
           "@type": "ContactPoint",
@@ -73,15 +85,15 @@
       },
       {
         "@type": "WebSite",
-        "@id": "https://evertreesolutions.com/#website",
-        "url": "https://evertreesolutions.com/",
+        "@id": "https://evertreesolutions.in/#website",
+        "url": "https://evertreesolutions.in/",
         "name": "EverTree Solutions",
         "publisher": {
-          "@id": "https://evertreesolutions.com/#organization"
+          "@id": "https://evertreesolutions.in/#organization"
         },
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://evertreesolutions.com/?q={search_term_string}",
+          "target": "https://evertreesolutions.in/?q={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       },
@@ -90,7 +102,7 @@
         "itemReviewed": {
           "@type": "ProfessionalService",
           "name": "EverTree Solutions Quote Platform",
-          "image": "https://evertreesolutions.com/og-social-share-1200x630.png",
+          "image": "https://evertreesolutions.in/og-social-share-1200x630.png",
           "telephone": "+1-855-831-2264",
           "address": {
             "@type": "PostalAddress",
